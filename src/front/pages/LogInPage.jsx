@@ -33,7 +33,7 @@ export const LogIn = () => {
 
     return (
         <>
-            <div className="container">
+            <div className="container signUpandLoginPages">
                 <h1>LogIn page!</h1>
                 {logInFailed ? <h2 className="text-danger">logIn Failed</h2> : null}
                 <div className="row">

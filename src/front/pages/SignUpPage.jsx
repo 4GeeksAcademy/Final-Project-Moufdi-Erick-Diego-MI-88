@@ -17,7 +17,7 @@ export const SignUp = () => {
             body: JSON.stringify(
                 {
                     "email": email,
-                    "pasword": password
+                    "password": password
                 }
             )
         })
@@ -32,7 +32,7 @@ export const SignUp = () => {
 
     return (
         <>
-            <div className="container">
+            <div className="container signUpandLoginPages">
                 <h1>Welcome to the Sign up Page</h1>
                 {signUpFailed ? <h2 className="text-danger">Sign up failed</h2> : null}
                 <div className="row">

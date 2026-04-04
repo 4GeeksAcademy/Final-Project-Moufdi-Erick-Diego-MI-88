@@ -1,8 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { useDiscountCalculator } from "../hooks/useDiscountCalculator";
-import DiscountPage from "../components/DiscountPage";
 import React from "react";
 
 export const BusinessPageProfile = () => {
@@ -25,7 +23,7 @@ export const BusinessPageProfile = () => {
   
 
   return (
-        <div className="conatiner border border rounded text-center mt-4">
+        <div className="conatiner border border business-profile rounded text-center mt-4">
             <div className="row mt-5">
                 <div className="col-4">
                     <img src="placeholder" className="rounded cardImage float-start mb-5 img-fluid rounde placeholder"></img>
@@ -36,7 +34,7 @@ export const BusinessPageProfile = () => {
                     <h1 className="text-light">Phone Number: {business.phone_number}</h1>
                     <h1 className="text-light">Business Address: {business.address}</h1>
                     <h1 className="text-light">Business Website: {business.website}</h1>
-                    <h1 className="text-light">Discounts and Offers: {business.discounts}</h1>
+                    {/* <h1 className="text-light">Discounts and Offers: {business.discounts}</h1> */}
                 </div>
             </div>
         </div>

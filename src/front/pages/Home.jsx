@@ -2,6 +2,7 @@ import React, { useEffect } from "react"
 import rigoImageUrl from "../assets/img/rigo-baby.jpg";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Hero } from "../components/Hero.jsx";
+import { BusinessCard } from "../components/BusinessCard.jsx";
 
 
 export const Home = () => {
@@ -38,6 +39,7 @@ export const Home = () => {
 		
 		<div className="text-center">
 			<Hero />
+			<BusinessCard />
 			<p className="lead">
 				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
 			</p>

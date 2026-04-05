@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Boolean, Enum
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, foreign, relationship
+import enum
 
 
 db = SQLAlchemy()
@@ -35,4 +36,27 @@ class Business(db.Model):
     business_name: Mapped[str] = mapped_column(String(120))
     business_phone_number: Mapped[str] = mapped_column(String(120))
     business_address: Mapped[str] = mapped_column(String(120))
-    # business_discounts: Mapped["discounts"] = relationship(back_populates="discounts")
+    discounts: Mapped[list["Discount"]] = relationship(backref="business", cascade="all, delete-orphan")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "type_of_business": self.type_of_business.value,
+            "business_name": self.business_name,
+            "business_phone_number": self.business_phone_number,
+            "business_address": self.business_address
+        }
+
+class Discount(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    discount_title: Mapped[str] = mapped_column(String(120))
+    description: Mapped[str] = mapped_column(String(120))
+    business_id: Mapped[int] = mapped_column(db.ForeignKey("business.id"))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "discount_title": self.discount_title,
+            "description": self.description,
+            "business_id": self.business_id
+        }

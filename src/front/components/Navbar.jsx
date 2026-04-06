@@ -4,7 +4,7 @@ import logoImageUrl from "../assets/img/logo.png";
 export const Navbar = () => {
 
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary border border-2 border-dark border-buttom shadow">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom border-2 border-dark border-buttom shadow">
       <div className="container-fluid fs-5 fw-medium">
         <a className="navbar-brand" href="#">
           <img src={logoImageUrl} style={{ width: "350px"}} />

@@ -4,7 +4,7 @@ import heroImageUrl from "../assets/img/heroimg.webp";
 export const Hero = () => {
     return (
         
-        <section className="container-fluid min-vh-100 d-flex align-items-center bg-light">
+        <section className="container-fluid min-vh-100 d-flex align-items-center bg-light border-bottom border-1">
     <div className="container">
         <div className="row align-items-center">
 

@@ -18,8 +18,8 @@ export const BusinessCard = () => {
                     <li className="list-group-item">123 Street. Miami, FL 33333</li>
                 </ul>
                 <div className="card-body">
-                    <a href="#" className="card-link">Add Favorite</a>
-                    <a href="#" className="card-link">More Info</a>
+                    <button href="#" type="button" className="btn btn-dark me-1">Add Favorite</button>
+                    <button href="#" type="button" className="btn btn-dark ms-1">More Info</button>
                 </div>
             </div>
 

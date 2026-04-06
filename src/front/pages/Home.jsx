@@ -38,7 +38,14 @@ export const Home = () => {
 		
 		<div className="text-center">
 			<Hero />
-			<BusinessCard />
+			<div className="container">
+			<div className="d-flex justify-content-around">
+			<BusinessCard className="col-3" />
+			<BusinessCard className="col-3" />
+			<BusinessCard className="col-3" />
+			<BusinessCard className="col-3" />
+			</div>
+			</div>
 			
 		</div>
 	);

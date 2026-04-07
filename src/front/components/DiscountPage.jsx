@@ -1,40 +1,105 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-const DiscountPage = () => {
-  const { quantity, setQuantity, total } = useDiscountCalculator();
-  
-  const discounts = [
-    { id: 1, title: "Bulk Purchase", desc: "Get 10% off on 10+ items", code: "BULK10" },
-    { id: 2, title: "New Partner", desc: "First-time business discount", code: "WELCOMEBIZ" }
-  ];
+export const DiscountPage = () => {
+    const { id } = useParams();
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Business Discount Portal</h1>
-      
-      {/* Discount Cards */}
-      <div className="grid gap-4 md:grid-cols-2 mb-10">
-        {discounts.map(deal => (
-          <div key={deal.id} className="border p-4 rounded-lg shadow-sm">
-            <h3 className="font-bold text-lg">{deal.title}</h3>
-            <p className="text-gray-600">{deal.desc}</p>
-            <code className="bg-gray-100 px-2 py-1 rounded mt-2 inline-block">{deal.code}</code>
-          </div>
-        ))}
-      </div>
+    const [discounts, setDiscounts] = useState([]);
+    const [formData, setFormData] = useState({
+        discount_title: "",
+        description: "",
+        percentage_rate: ""
+    });
 
-      {/* Dynamic Pricing Section */}
-      <div className="bg-blue-50 p-6 rounded-xl">
-        <h2 className="text-xl font-semibold mb-4">Calculate Your Order</h2>
-        <div className="flex items-center gap-4">
-          <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="bg-white border px-4 py-2 rounded">-</button>
-          <span className="text-xl font-bold">{quantity} units</span>
-          <button onClick={() => setQuantity(q => q + 1)} className="bg-white border px-4 py-2 rounded">+</button>
+    const getDiscounts = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/business/${id}/discounts`);
+            const data = await response.json();
+            setDiscounts(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const createDiscount = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(`${BASE_URL}/business/${id}/discounts`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    discount_title: formData.discount_title,
+                    description: formData.description,
+                    percentage_rate: parseFloat(formData.percentage_rate)
+                })
+            });
+
+            if (response.ok) {
+                const newDiscount = await response.json();
+                setDiscounts([...discounts, newDiscount]);
+                setFormData({
+                    discount_title: "",
+                    description: "",
+                    percentage_rate: ""
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        getDiscounts();
+    }, []);
+
+    return (
+        <div className="container mt-4">
+            <h1>Discount Page</h1>
+
+            <form onSubmit={createDiscount} className="mb-4">
+                <input
+                    type="text"
+                    placeholder="Discount title"
+                    value={formData.discount_title}
+                    onChange={(e) =>
+                        setFormData({ ...formData, discount_title: e.target.value })
+                    }
+                />
+
+                <input
+                    type="text"
+                    placeholder="Description"
+                    value={formData.description}
+                    onChange={(e) =>
+                        setFormData({ ...formData, description: e.target.value })
+                    }
+                />
+
+                <input
+                    type="number"
+                    placeholder="Percentage rate"
+                    value={formData.percentage_rate}
+                    onChange={(e) =>
+                        setFormData({ ...formData, percentage_rate: e.target.value })
+                    }
+                />
+
+                <button type="submit">Create Discount</button>
+            </form>
+
+            <div>
+                {discounts.map((discount) => (
+                    <div key={discount.id} className="border p-3 mb-3 rounded">
+                        <h3>{discount.discount_title}</h3>
+                        <p>{discount.description}</p>
+                        <p>{discount.percentage_rate}%</p>
+                    </div>
+                ))}
+            </div>
         </div>
-        <p className="mt-4 text-2xl">Total Price: ${total.toFixed(2)}</p>
-      </div>
-    </div>
-  );
+    );
 };
-
-export default DiscountPage;

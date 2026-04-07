@@ -24,9 +24,9 @@ export const BusinessPageProfile = () => {
 
   return (
         <div className="conatiner border border business-profile rounded text-center mt-4">
-            <div className="row mt-5">
+            <div className="business-profile-content mt-5">
                 <div className="col-4">
-                    <img src="placeholder" className="rounded cardImage float-start mb-5 img-fluid rounde placeholder"></img>
+                    <img src="placeholder" className="rounded business-profile-img float-start mb-5 img-fluid rounde placeholder"></img>
                 </div>
                 <div className="col-4">
                     <h1 className="text-light">Business Name: {business.name}</h1>

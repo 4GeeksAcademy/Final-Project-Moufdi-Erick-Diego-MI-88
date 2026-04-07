@@ -23,11 +23,11 @@ class User(db.Model):
         }
     
 class BusinessType(enum.Enum):
-    Agriculture, Forestry, Fishing, Hunting = "agriculture, forestry, fishing & hunting"
-    Construction, Skilled_Trades = "Construction, Skilled_trades"
+    Agriculture  = "agriculture, forestry, fishing & hunting"
+    Construction  = "Construction, Skilled_trades"
     Manufacturing = "manufacturing"
-    Wholesale, Retail_Trade = "wholesale & retail trade"
-    Transportation, Warehousing = "transportation, warehousing"
+    Wholesale  = "wholesale & retail trade"
+    Transportation = "transportation, warehousing"
 
 
 class Business(db.Model):
@@ -51,6 +51,7 @@ class Discount(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     discount_title: Mapped[str] = mapped_column(String(120))
     description: Mapped[str] = mapped_column(String(120))
+    percentage_rate: Mapped[float] = mapped_column(nullable=False)
     business_id: Mapped[int] = mapped_column(db.ForeignKey("business.id"))
 
     def serialize(self):

@@ -39,7 +39,7 @@ export const Home = () => {
 		<div className="text-center">
 			<Hero />
 			<div className="container">
-			<div className="d-flex justify-content-around">
+			<div className="d-flex justify-content-around py-5">
 			<BusinessCard className="col-3" />
 			<BusinessCard className="col-3" />
 			<BusinessCard className="col-3" />

@@ -14,10 +14,10 @@ export const Hero = () => {
                 <p className="lead mt-2">
                     All your services in your pocket
                 </p>
-                <button className="btn btn-warning btn-lg me-2">
+                <button className="button btn btn-warning btn-lg me-2">
                     Log In
                 </button>
-                <button className="btn btn-warning btn-lg ms-2">
+                <button className="button btn btn-warning btn-lg ms-2">
     Sign Up
 </button>
             </div>

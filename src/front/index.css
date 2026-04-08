@@ -1,4 +1,6 @@
-.signUpandLoginPages {
+.button {
+    background: #ffde59
+}.signUpandLoginPages {
     display: flex;
     flex-direction: column;
     align-items: center;

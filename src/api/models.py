@@ -22,13 +22,29 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
     
+    '''
+    ritten the wrong way 
 class BusinessType(enum.Enum):
     Agriculture, Forestry, Fishing, Hunting = "agriculture, forestry, fishing & hunting"
     Construction, Skilled_Trades = "Construction, Skilled_trades"
     Manufacturing = "manufacturing"
     Wholesale, Retail_Trade = "wholesale & retail trade"
     Transportation, Warehousing = "transportation, warehousing"
+'''
 
+#the right way
+class BusinessType(enum.Enum):
+    Agriculture = "agriculture"
+    Forestry = "forestry"
+    Fishing = "fishing"
+    Hunting = "hunting"
+    Construction = "construction"
+    Skilled_Trades = "skilled trades"
+    Manufacturing = "manufacturing"
+    Wholesale = "wholesale"
+    Retail_Trade = "retail trade"
+    Transportation = "transportation"
+    Warehousing = "warehousing"
 
 class Business(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

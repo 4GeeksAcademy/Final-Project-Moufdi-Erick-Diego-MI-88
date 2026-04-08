@@ -2,9 +2,13 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
-from api.utils import generate_sitemap, APIException
+from .models import db, User
+from .utils import generate_sitemap, APIException
 from flask_cors import CORS
+
+
+# moufdi
+from .services.google_maps_service import get_coordinates
 
 api = Blueprint('api', __name__)
 
@@ -20,3 +24,12 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+# moufdi added this
+
+
+@api.route('/geocode', methods=['GET'])
+def geocode():
+    address = request.args.get('address')  # gets the address from URL query
+    # calls your service and returns JSON
+    return jsonify(get_coordinates(address))

@@ -23,11 +23,21 @@ class User(db.Model):
         }
     
 class BusinessType(enum.Enum):
-    Agriculture  = "agriculture, forestry, fishing & hunting"
-    Construction  = "Construction, Skilled_trades"
-    Manufacturing = "manufacturing"
-    Wholesale  = "wholesale & retail trade"
-    Transportation = "transportation, warehousing"
+    FOOD = "food"
+    RETAIL = "retail"
+    BEAUTY = "beauty"
+    HEALTH = "health"
+    FITNESS = "fitness"
+    HOME_SERVICES = "home_services"
+    AUTO_SERVICES = "auto_services"
+    PROFESSIONAL_SERVICES = "professional_services"
+    EDUCATION = "education"
+    PET_SERVICES = "pet_services"
+    EVENTS = "events"
+    TECHNOLOGY = "technology"
+    REAL_ESTATE = "real_estate"
+    TRAVEL = "travel"
+    OTHER = "other"
 
 
 class Business(db.Model):

@@ -25,26 +25,22 @@ class User(db.Model):
     '''
     ritten the wrong way 
 class BusinessType(enum.Enum):
-    Agriculture, Forestry, Fishing, Hunting = "agriculture, forestry, fishing & hunting"
-    Construction, Skilled_Trades = "Construction, Skilled_trades"
-    Manufacturing = "manufacturing"
-    Wholesale, Retail_Trade = "wholesale & retail trade"
-    Transportation, Warehousing = "transportation, warehousing"
-'''
+    FOOD = "food"
+    RETAIL = "retail"
+    BEAUTY = "beauty"
+    HEALTH = "health"
+    FITNESS = "fitness"
+    HOME_SERVICES = "home_services"
+    AUTO_SERVICES = "auto_services"
+    PROFESSIONAL_SERVICES = "professional_services"
+    EDUCATION = "education"
+    PET_SERVICES = "pet_services"
+    EVENTS = "events"
+    TECHNOLOGY = "technology"
+    REAL_ESTATE = "real_estate"
+    TRAVEL = "travel"
+    OTHER = "other"
 
-#the right way
-class BusinessType(enum.Enum):
-    Agriculture = "agriculture"
-    Forestry = "forestry"
-    Fishing = "fishing"
-    Hunting = "hunting"
-    Construction = "construction"
-    Skilled_Trades = "skilled trades"
-    Manufacturing = "manufacturing"
-    Wholesale = "wholesale"
-    Retail_Trade = "retail trade"
-    Transportation = "transportation"
-    Warehousing = "warehousing"
 
 class Business(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -67,6 +63,7 @@ class Discount(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     discount_title: Mapped[str] = mapped_column(String(120))
     description: Mapped[str] = mapped_column(String(120))
+    percentage_rate: Mapped[float] = mapped_column(nullable=False)
     business_id: Mapped[int] = mapped_column(db.ForeignKey("business.id"))
 
     def serialize(self):

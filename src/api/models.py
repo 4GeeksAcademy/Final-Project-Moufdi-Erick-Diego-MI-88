@@ -22,8 +22,7 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
     
-    '''
-    ritten the wrong way 
+   
 class BusinessType(enum.Enum):
     FOOD = "food"
     RETAIL = "retail"

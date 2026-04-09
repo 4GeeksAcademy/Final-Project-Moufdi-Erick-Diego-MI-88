@@ -9,6 +9,10 @@ from sqlalchemy import select
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 
+
+# moufdi
+from .services.google_maps_service import get_coordinates
+
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
@@ -116,3 +120,12 @@ def create_discount(business_id):
     db.session.commit()
 
     return jsonify(new_discount.serialize()), 201
+
+# moufdi added this
+
+
+@api.route('/geocode', methods=['GET'])
+def geocode():
+    address = request.args.get('address')  # gets the address from URL query
+    # calls your service and returns JSON
+    return jsonify(get_coordinates(address))

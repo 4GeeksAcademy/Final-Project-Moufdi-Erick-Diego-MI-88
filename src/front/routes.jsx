@@ -33,7 +33,7 @@ export const router = createBrowserRouter(
         <Route path="/demo" element={<Demo />} />
         <Route path="/signup" element={<SignUp />} /> 
         <Route path="/login" element={<LogIn />} /> 
-        <Route path="/bussiness-signup" element={<BusinessSignUp/>} />
+        <Route path="/business-signup" element={<BusinessSignUp/>} />
         <Route path="/business/:id" element={<BusinessPageProfile />} />
         <Route path="/business/:id/discounts" element={<DiscountPage />} />
         <Route path="/about-us" element={<AboutUs />} />

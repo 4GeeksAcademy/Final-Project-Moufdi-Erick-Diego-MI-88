@@ -9,17 +9,15 @@ export const BusinessSignUp = () => {
 
 
     const handleSignUp = async () => {
-        const Response = await fetch(BASE_URL + "/bussiness-signup", {
+        const Response = await fetch(BASE_URL + "/business-signup", {
             method: "POST",
             headers: {
-                "content-Type": "application/json"
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify(
-                {
-                    "email": email,
-                    "password": password
-                }
-            )
+            body: JSON.stringify({
+                email,
+                password
+            })
         })
         if (!Response.ok) {
             setSignUpFailed(true)

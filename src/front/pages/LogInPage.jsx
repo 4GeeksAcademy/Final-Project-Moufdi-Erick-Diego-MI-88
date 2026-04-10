@@ -12,23 +12,21 @@ export const LogIn = () => {
         const Response = await fetch(BASE_URL + "/login", {
             method: "POST",
             headers: {
-                "content-Type": "application/json"
+                "Content-Type": "application/json"
             },
-            body: JSON.stringinify(
-                {
-                    "email": email,
-                    "pasword": password
-                }
-            )
+            body: JSON.stringify({
+                email,
+                password
+            })
         })
         if (!Response.ok) {
             setLogInFailed(true)
             return
         }
-        const data = await Response.json()
-        localStorage.settings("token", data.token)
-        setLogInFailed(false)
 
+        const data = await Response.json()
+        localStorage.setItem("token", data.token)
+        setLogInFailed(false)
     }
 
     return (

@@ -19,7 +19,7 @@ export const BusinessCard = () => {
                 </ul>
                 <div className="card-body">
                     <button href="#" type="button" className="btn btn-dark me-1">Add Favorite</button>
-                    <button href="#" type="button" className="btn btn-dark ms-1">More Info</button>
+                    <button href="#" type="button" className="b tn btn-dark ms-1">More Info</button>
                 </div>
             </div>
 

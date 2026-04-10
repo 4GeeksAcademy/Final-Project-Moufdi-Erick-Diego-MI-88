@@ -14,7 +14,7 @@ import { LogIn } from "./pages/LogInPage";
 import { BusinessSignUp } from "./pages/BusinessSignUpPage";
 import { BusinessPageProfile } from "./pages/BusinessPageProfile";
 import { DiscountPage } from "./components/DiscountPage";
-import  AboutUs from "./pages/AboutUsPage";
+import { AboutUs }  from "./pages/AboutUsPage";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(

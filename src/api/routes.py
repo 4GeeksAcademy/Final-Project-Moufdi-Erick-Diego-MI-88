@@ -2,12 +2,11 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Business, Discount
-from api.utils import generate_sitemap, APIException
+from .models import db, User, Business, Discount
+from .utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
 
 
 # moufdi
@@ -28,11 +27,12 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+
 @api.route("/signup", methods=["POST"])
 def handle_sign_up():
-    body = request.json #{"email":----, and "password":----}
+    body = request.json  # {"email":----, and "password":----}
 
-    #checking the data base to make sure  that email is already used
+    # checking the data base to make sure  that email is already used
     potential_user = db.session.execute(
         select(User).where(User.email == body["email"])
     ).scalar_one_or_none()
@@ -45,17 +45,17 @@ def handle_sign_up():
     new_user.password = body["password"]
     new_user.is_active = True
 
-
     # adding user to the date base
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"msg":"user was created"}), 201
+    return jsonify({"msg": "user was created"}), 201
+
 
 @api.route("/business-signup", methods=["POST"])
 def handle_business_sign_up():
-    body = request.json #{"email":----, and "password":----}
+    body = request.json  # {"email":----, and "password":----}
 
-    #checking the data base to make sure  that email is already used
+    # checking the data base to make sure  that email is already used
     potential_user = db.session.execute(
         select(User).where(User.email == body["email"])
     ).scalar_one_or_none()
@@ -68,11 +68,11 @@ def handle_business_sign_up():
     new_user.password = body["password"]
     new_user.is_active = True
 
-
     # adding user to the date base
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"msg":"user was created"}), 201
+    return jsonify({"msg": "user was created"}), 201
+
 
 @api.route("/login", methods=["POST"])
 def create_token():
@@ -92,12 +92,14 @@ def create_token():
         "email": user.email
     }), 200
 
+
 @api.route("/business/<int:business_id>", methods=["GET"])
 def get_business(business_id):
     business = Business.query.get(business_id)
     if not business:
         return jsonify({"msg": "Business not found"}), 404
     return jsonify(business.serialize()), 200
+
 
 @api.route("/business/<int:business_id>/discounts", methods=["GET"])
 def get_business_discounts(business_id):

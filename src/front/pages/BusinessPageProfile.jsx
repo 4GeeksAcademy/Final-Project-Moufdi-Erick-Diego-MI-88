@@ -22,21 +22,90 @@ export const BusinessPageProfile = () => {
     }, [id])
   
 
-  return (
-        <div className="conatiner border border business-profile rounded text-center mt-4">
-            <div className="business-profile-content mt-5">
-                <div className="col-4">
-                    <img src="placeholder" className="rounded business-profile-img float-start mb-5 img-fluid rounde placeholder"></img>
-                </div>
-                <div className="col-4">
-                    <h1 className="text-light">Business Name: {business.name}</h1>
-                    <h1 className="text-light">Category: {business.category}</h1>
-                    <h1 className="text-light">Phone Number: {business.phone_number}</h1>
-                    <h1 className="text-light">Business Address: {business.address}</h1>
-                    <h1 className="text-light">Business Website: {business.website}</h1>
-                    {/* <h1 className="text-light">Discounts and Offers: {business.discounts}</h1> */}
-                </div>
-            </div>
-        </div>
-    )}
+   return (
+    <div
+      className="container-fluid py-5"
+      style={{ backgroundColor: "#f3f3f3", minHeight: "100vh" }}
+    >
+      <div className="container">
 
+        <div className="card border-0 shadow-sm mb-4">
+          <div
+            className="card-body p-4"
+            style={{ backgroundColor: "#8a8442", color: "white" }}
+          >
+            <h2 className="text-center fw-bold mb-4">Business Name</h2>
+
+            <div className="row align-items-center">
+              <div className="col-md-4 text-center mb-4 mb-md-0">
+                <img
+                  src="https://via.placeholder.com/300x220?text=Business+Image"
+                  alt="Business"
+                  className="img-fluid rounded"
+                />
+              </div>
+
+              <div className="col-md-8">
+                <p><strong>Business Name:</strong> Example Business</p>
+                <p><strong>Address:</strong> 123 Main Street, Boca Raton, FL</p>
+                <p><strong>Website:</strong> https://example.com</p>
+                <p><strong>Email:</strong> business@email.com</p>
+                <p><strong>Phone:</strong> (561) 000-0000</p>
+                <p><strong>Services:</strong> Web Design, Branding, Marketing</p>
+                <p className="mb-0">
+                  <strong>Description:</strong> This business helps customers with
+                  professional services and a clear local presence.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card border-0 shadow-sm mb-4">
+          <div className="card-body p-4">
+            <div className="row g-4">
+              <div className="col-md-6">
+                <div className="border rounded p-4 h-100 text-center">
+                  <h4 className="fw-bold mb-3">Location</h4>
+                  <div
+                    className="d-flex align-items-center justify-content-center rounded"
+                    style={{ height: "250px", backgroundColor: "#e9ecef" }}
+                  >
+                    Map Section
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="border rounded p-4 h-100 text-center">
+                  <h4 className="fw-bold mb-3">Offers</h4>
+                  <div
+                    className="d-flex align-items-center justify-content-center rounded"
+                    style={{ height: "250px", backgroundColor: "#e9ecef" }}
+                  >
+                    Offers Section
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <div className="border rounded p-4 text-center">
+                <h4 className="fw-bold mb-3">Reviews</h4>
+                <div
+                  className="d-flex align-items-center justify-content-center rounded"
+                  style={{ height: "150px", backgroundColor: "#e9ecef" }}
+                >
+                  Reviews Section
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default BusinessPageProfile;

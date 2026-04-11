@@ -2,8 +2,8 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Business, Discount
-from api.utils import generate_sitemap, APIException
+from .models import db, User, Business, Discount
+from .utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -91,6 +91,19 @@ def create_token():
         "user_id": user.id,
         "email": user.email
     }), 200
+
+@api.route("/reset-password", methods=["PUT"])
+def reset_password():
+    body = request.get_json()
+
+    user = User.query.filter_by(email=body["email"]).first()
+    if user is None:
+        return jsonify({"msg": "User not found"}), 404
+
+    user.password = body["new_password"]
+    db.session.commit()
+
+    return jsonify({"msg": "Password updated"}), 200
 
 @api.route("/business/<int:business_id>", methods=["GET"])
 def get_business(business_id):

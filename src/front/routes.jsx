@@ -11,6 +11,7 @@ import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import { SignUp } from "./pages/SignUpPage";
 import { LogIn } from "./pages/LogInPage";
+import { UserProfilePage } from "./pages/UserProfilePage";
 import { BusinessSignUp } from "./pages/BusinessSignUpPage";
 import { BusinessPageProfile } from "./pages/BusinessPageProfile";
 import { DiscountPage } from "./components/DiscountPage";

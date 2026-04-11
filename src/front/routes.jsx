@@ -11,7 +11,7 @@ import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import { SignUp } from "./pages/SignUpPage";
 import { LogIn } from "./pages/LogInPage";
-import ForgotPassword from "./pages/ForgotPasswordPage";
+import { ForgotPassword } from "./pages/ForgotPasswordPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
 import { BusinessSignUp } from "./pages/BusinessSignUpPage";
 import { BusinessPageProfile } from "./pages/BusinessPageProfile";
@@ -35,6 +35,7 @@ export const router = createBrowserRouter(
         <Route path="/demo" element={<Demo />} /> 
         <Route path="/signup" element={<SignUp />} /> 
         <Route path="/login" element={<LogIn />} /> 
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/bussiness-signup" element={<BusinessSignUp/>} />
         <Route path="/business/:id" element={<BusinessPageProfile />} />
         <Route path="/business/:id/discounts" element={<DiscountPage />} />

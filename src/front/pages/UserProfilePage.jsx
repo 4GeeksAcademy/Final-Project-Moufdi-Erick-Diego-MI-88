@@ -125,25 +125,14 @@ export const UserProfilePage = () => {
                                 <div>
                                     <h5 className="fw-bold mb-4">Favorites</h5>
                                     <div className="row g-3">
-                                        {[
-                                            { name: "Casa Juancho", category: "Restaurant" },
-                                            { name: "LegalEdge", category: "Lawyers" },
-                                            { name: "FixIt Pro", category: "Home Improve" },
-                                            { name: "Nail Studio", category: "Beauty" },
-                                        ].map((biz, i) => (
-                                            <div className="col-md-4" key={i}>
-                                                <div className="card border h-100">
-                                                    <div
-                                                        className="bg-secondary d-flex align-items-center justify-content-center text-white"
-                                                        style={{ height: "120px", fontSize: "13px" }}
-                                                    >
-                                                        No image
-                                                    </div>
-                                                    <div className="card-body p-2">
-                                                        <p className="fw-bold mb-0 small">{biz.name}</p>
-                                                        <small className="text-muted">{biz.category}</small>
-                                                    </div>
-                                                </div>
+                                         {favorites.map((biz, i) => (
+                                            <div className="col-md-6" key={i}>
+                                                <BusinessCard
+                                                    business_name={biz.business_name}
+                                                    type_of_business={biz.type_of_business}
+                                                    business_phone_number={biz.business_phone_number}
+                                                    business_address={biz.business_address}
+                                                />
                                             </div>
                                         ))}
                                     </div>
@@ -164,17 +153,12 @@ export const UserProfilePage = () => {
                                             </div>
                                         </li>
                                         <li className="list-group-item d-flex justify-content-between align-items-center">
-                                            Promotional offers
+                                            Send me SMS gitoffers
                                             <div className="form-check form-switch mb-0">
                                                 <input className="form-check-input" type="checkbox" />
                                             </div>
                                         </li>
-                                        <li className="list-group-item d-flex justify-content-between align-items-center">
-                                            New businesses near me
-                                            <div className="form-check form-switch mb-0">
-                                                <input className="form-check-input" type="checkbox" defaultChecked />
-                                            </div>
-                                        </li>
+                                        
                                     </ul>
 
                                     <p className="text-muted small fw-bold mb-2">Account</p>
@@ -183,13 +167,7 @@ export const UserProfilePage = () => {
                                             Change password
                                             <button className="btn btn-sm btn-outline-secondary">Change</button>
                                         </li>
-                                        <li className="list-group-item d-flex justify-content-between align-items-center">
-                                            Language
-                                            <select className="form-select form-select-sm w-auto">
-                                                <option>English</option>
-                                                <option>Español</option>
-                                            </select>
-                                        </li>
+                                        
                                     </ul>
 
                                     <button className="btn btn-outline-danger btn-sm">Delete account</button>

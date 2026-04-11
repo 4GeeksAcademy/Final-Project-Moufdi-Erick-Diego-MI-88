@@ -47,6 +47,7 @@ class Business(db.Model):
     business_name: Mapped[str] = mapped_column(String(120))
     business_phone_number: Mapped[str] = mapped_column(String(120))
     business_address: Mapped[str] = mapped_column(String(120))
+    business_description: Mapped[str] = mapped_column(String(255))
     discounts: Mapped[list["Discount"]] = relationship(backref="business", cascade="all, delete-orphan")
 
     def serialize(self):
@@ -55,7 +56,8 @@ class Business(db.Model):
             "type_of_business": self.type_of_business.value,
             "business_name": self.business_name,
             "business_phone_number": self.business_phone_number,
-            "business_address": self.business_address
+            "business_address": self.business_address,
+            "business_description": self.business_description
         }
 
 class Discount(db.Model):

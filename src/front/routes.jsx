@@ -12,6 +12,7 @@ import { Demo } from "./pages/Demo";
 import { SignUp } from "./pages/SignUpPage";
 import { LogIn } from "./pages/LogInPage";
 import ForgotPassword from "./pages/ForgotPasswordPage";
+import { UserProfilePage } from "./pages/UserProfilePage";
 import { BusinessSignUp } from "./pages/BusinessSignUpPage";
 import { BusinessPageProfile } from "./pages/BusinessPageProfile";
 import { DiscountPage } from "./components/DiscountPage";
@@ -31,11 +32,10 @@ export const router = createBrowserRouter(
         {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
         <Route path= "/" element={<Home />} />
         <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
-        <Route path="/demo" element={<Demo />} />
+        <Route path="/demo" element={<Demo />} /> 
         <Route path="/signup" element={<SignUp />} /> 
         <Route path="/login" element={<LogIn />} /> 
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/business-signup" element={<BusinessSignUp/>} />
+        <Route path="/bussiness-signup" element={<BusinessSignUp/>} />
         <Route path="/business/:id" element={<BusinessPageProfile />} />
         <Route path="/business/:id/discounts" element={<DiscountPage />} />
         <Route path="/about-us" element={<AboutUs />} />

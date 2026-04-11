@@ -38,7 +38,7 @@ export const BusinessSignUp = () => {
                     <div className="col-6">
                         <div>
                             <label for="email">Email</label>
-                            <input type="text" name="email" onChange = {e => setEmail(e.target.value)} value={email} />
+                            <input type="text" name="email" onChange={e => setEmail(e.target.value)} value={email} />
                         </div>
                         <div>
                             <label for="password">password</label>

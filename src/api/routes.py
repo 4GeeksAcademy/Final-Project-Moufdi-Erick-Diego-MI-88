@@ -129,3 +129,16 @@ def geocode():
     address = request.args.get('address')  # gets the address from URL query
     # calls your service and returns JSON
     return jsonify(get_coordinates(address))
+
+# contact-us
+@api.route('/contact', methods=['POST'])
+def contact():
+    data = request.get_json()
+
+    name = data.get("name")
+    email = data.get("email")
+    message = data.get("message")
+
+    print("Received:", name, email, message)
+
+    return jsonify({"success": True}), 200

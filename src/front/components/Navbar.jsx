@@ -23,9 +23,11 @@ export const Navbar = () => {
                 Services
               </a>
               <ul className="dropdown-menu">
+                <li><a className="dropdown-item" href="#">All Categories</a></li>
+                <li><hr className="dropdown-divider"></hr></li>
                 <li><a className="dropdown-item" href="#">Restaurants</a></li>
                 <li><a className="dropdown-item" href="#">Home Improve</a></li>
-                <li><hr className="dropdown-divider"></hr></li>
+                <li><a className="dropdown-item" href="#">Pets</a></li>
                 <li><a className="dropdown-item" href="#">Lawyers</a></li>
               </ul>
             </li>
@@ -34,6 +36,9 @@ export const Navbar = () => {
             </li>
             <li className="nav-item">
               <a className="nav-link" href="#">Contact Us</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/user-profile">Sign In</a>
             </li>
           </ul>
           <form className="d-flex" role="search">

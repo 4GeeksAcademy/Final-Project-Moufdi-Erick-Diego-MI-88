@@ -1,12 +1,13 @@
 import React from "react";
 import { BusinessCard } from "../components/BusinessCard";
+import { HeroSubPages } from "../components/HeroSubPages";
 
 import { useState } from "react";
 
 export const UserProfilePage = () => {
     const [activeTab, setActiveTab] = useState("personal");
 
-     const favorites = [
+    const favorites = [
         {
             business_name: "Casa Juancho",
             type_of_business: "Restaurant",
@@ -35,8 +36,11 @@ export const UserProfilePage = () => {
 
 
     return (
+
         <div className="container-fluid min-vh-100 bg-light pt-5">
+<HeroSubPages title="My Profile" />
             <div className="container">
+                
                 <div className="row g-4">
 
                     {/* ── Sidebar ── */}
@@ -46,8 +50,8 @@ export const UserProfilePage = () => {
                             {/* profile picture */}
                             <div className="d-flex justify-content-center mb-3">
                                 <div
-                                    className="rounded-circle bg-warning d-flex align-items-center justify-content-center"
-                                    style={{ width: "90px", height: "90px", fontSize: "2rem" }}
+                                    className="rounded-circle d-flex align-items-center justify-content-center"
+                                    style={{ width: "90px", height: "90px", fontSize: "2rem", background: "#ffde59" }}
                                 >
                                     ER
                                 </div>
@@ -61,22 +65,22 @@ export const UserProfilePage = () => {
                             {/* tabs */}
                             <div className="d-flex flex-column gap-2">
                                 <button
-                                    className={`btn btn-sm text-start ${activeTab === "personal" ? "btn-warning fw-bold" : "btn-outline-secondary"}`}
+                                    className={`btn btn-sm text-start ${activeTab === "personal" ? "button fw-bold" : "btn-outline-secondary"}`}
                                     onClick={() => setActiveTab("personal")}
                                 >
-                                    👤 Personal Info
+                                    Personal Info
                                 </button>
                                 <button
-                                    className={`btn btn-sm text-start ${activeTab === "favorites" ? "btn-warning fw-bold" : "btn-outline-secondary"}`}
+                                    className={`btn btn-sm text-start ${activeTab === "favorites" ? "button fw-bold" : "btn-outline-secondary"}`}
                                     onClick={() => setActiveTab("favorites")}
                                 >
-                                    ★ Favorites
+                                    Favorites
                                 </button>
                                 <button
-                                    className={`btn btn-sm text-start ${activeTab === "settings" ? "btn-warning fw-bold" : "btn-outline-secondary"}`}
+                                    className={`btn btn-sm text-start ${activeTab === "settings" ? "button fw-bold" : "btn-outline-secondary"}`}
                                     onClick={() => setActiveTab("settings")}
                                 >
-                                    ⚙ Settings
+                                    Settings
                                 </button>
                             </div>
                         </div>
@@ -116,7 +120,7 @@ export const UserProfilePage = () => {
                                             <input type="text" className="form-control" defaultValue="Jan 1, 1990" readOnly />
                                         </div>
                                     </div>
-                                    <button className="btn btn-warning mt-4">Edit profile</button>
+                                    <button className="button btn btn-warning mt-4">Edit profile</button>
                                 </div>
                             )}
 
@@ -125,7 +129,7 @@ export const UserProfilePage = () => {
                                 <div>
                                     <h5 className="fw-bold mb-4">Favorites</h5>
                                     <div className="row g-3">
-                                         {favorites.map((biz, i) => (
+                                        {favorites.map((biz, i) => (
                                             <div className="col-md-6" key={i}>
                                                 <BusinessCard
                                                     business_name={biz.business_name}
@@ -153,21 +157,21 @@ export const UserProfilePage = () => {
                                             </div>
                                         </li>
                                         <li className="list-group-item d-flex justify-content-between align-items-center">
-                                            Send me SMS gitoffers
+                                            Send me SMS offers
                                             <div className="form-check form-switch mb-0">
                                                 <input className="form-check-input" type="checkbox" />
                                             </div>
                                         </li>
-                                        
+
                                     </ul>
 
                                     <p className="text-muted small fw-bold mb-2">Account</p>
                                     <ul className="list-group mb-4">
                                         <li className="list-group-item d-flex justify-content-between align-items-center">
                                             Change password
-                                            <button className="btn btn-sm btn-outline-secondary">Change</button>
+                                            <button className="button btn btn-sm">Change</button>
                                         </li>
-                                        
+
                                     </ul>
 
                                     <button className="btn btn-outline-danger btn-sm">Delete account</button>

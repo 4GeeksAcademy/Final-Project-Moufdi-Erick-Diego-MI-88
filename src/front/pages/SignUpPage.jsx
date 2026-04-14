@@ -7,50 +7,96 @@ export const SignUp = () => {
     const [password, setPassword] = useState("")
     const [signUpFailed, setSignUpFailed] = useState(false)
 
-
     const handleSignUp = async () => {
         const Response = await fetch(BASE_URL + "/signup", {
             method: "POST",
             headers: {
-                "content-Type": "application/json"
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify(
-                {
-                    "email": email,
-                    "password": password
-                }
-            )
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
         })
+
         if (!Response.ok) {
             setSignUpFailed(true)
             return
         }
+
         const data = await Response.json()
+        setSignUpFailed(false)
         return data
     }
 
-
     return (
-        <>
-            <div className="container signUpandLoginPages">
-                <h1>Welcome to the Sign up Page</h1>
-                {signUpFailed ? <h2 className="text-danger">Sign up failed</h2> : null}
-                <div className="row">
-                    <div className="col-3"></div>
-                    <div className="col-6">
-                        <div>
-                            <label for="email">Email</label>
-                            <input type="text" name="email" onChange = {e => setEmail(e.target.value)} value={email} />
-                        </div>
-                        <div>
-                            <label for="password">password</label>
-                            <input type="password" name="password" onChange={e => setPassword(e.target.value)} value={password} />
+        <div
+            className="container-fluid d-flex align-items-center py-5"
+            style={{ backgroundColor: "#f3f3f3", minHeight: "100vh" }}
+        >
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-lg-8 col-xl-7">
+                        <div className="card border-0 shadow-lg rounded-5 overflow-hidden">
+                            <div
+                                className="card-body p-4 p-md-5"
+                                style={{ backgroundColor: "#8a8442", color: "white" }}
+                            >
+                                <h2 className="text-center fw-bold mb-5 display-5">
+                                    User Sign Up
+                                </h2>
+
+                                {signUpFailed ? (
+                                    <div className="alert alert-danger text-center">
+                                        Sign up failed
+                                    </div>
+                                ) : null}
+
+                                <div className="row justify-content-center">
+                                    <div className="col-md-10">
+                                        <div className="mb-4">
+                                            <label className="form-label text-white fw-bold fs-5">
+                                                Email
+                                            </label>
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                className="form-control form-control-lg rounded-4 border-0 shadow"
+                                                placeholder="Enter email"
+                                                onChange={e => setEmail(e.target.value)}
+                                                value={email}
+                                            />
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label className="form-label text-white fw-bold fs-5">
+                                                Password
+                                            </label>
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                className="form-control form-control-lg rounded-4 border-0 shadow"
+                                                placeholder="Enter password"
+                                                onChange={e => setPassword(e.target.value)}
+                                                value={password}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="text-center mt-5">
+                                    <button
+                                        className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-pill shadow"
+                                        onClick={handleSignUp}
+                                    >
+                                        Sign Up
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className="col-3"></div>
                 </div>
-                <button className="btn btn-success" onClick={handleSignUp}>Sign up</button>
             </div>
-        </>
+        </div>
     )
 }

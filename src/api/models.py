@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, Enum
+from sqlalchemy import String, Boolean, Enum, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, foreign, relationship
 import enum
 
@@ -13,6 +13,7 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     
+    business_id: Mapped[int | None] = mapped_column(ForeignKey("business.id"), nullable=True)
 
 
     def serialize(self):
@@ -43,19 +44,23 @@ class BusinessType(enum.Enum):
 
 class Business(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    type_of_business: Mapped[BusinessType] = mapped_column(Enum(BusinessType), nullable=False) 
+    type_of_business: Mapped[str] = mapped_column(String(120), nullable=False)
     business_name: Mapped[str] = mapped_column(String(120))
     business_phone_number: Mapped[str] = mapped_column(String(120))
     business_address: Mapped[str] = mapped_column(String(120))
+    business_description: Mapped[str] = mapped_column(String(255))
+    business_image: Mapped[str] = mapped_column(String(255), nullable=True)
     discounts: Mapped[list["Discount"]] = relationship(backref="business", cascade="all, delete-orphan")
 
     def serialize(self):
         return {
             "id": self.id,
-            "type_of_business": self.type_of_business.value,
+            "type_of_business": self.type_of_business,
             "business_name": self.business_name,
             "business_phone_number": self.business_phone_number,
-            "business_address": self.business_address
+            "business_address": self.business_address,
+            "business_description": self.business_description,
+            "business_image": self.business_image
         }
 
 class Discount(db.Model):
@@ -70,5 +75,6 @@ class Discount(db.Model):
             "id": self.id,
             "discount_title": self.discount_title,
             "description": self.description,
+            "percentage_rate": self.percentage_rate,
             "business_id": self.business_id
         }

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-
 
 export const LogIn = () => {
     const BASE_URL = import.meta.env.VITE_BACKEND_URL
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [logInFailed, setLogInFailed] = useState(false)
+    const navigate = useNavigate()
 
     const handleLogin = async () => {
         const Response = await fetch(BASE_URL + "/login", {
@@ -19,14 +20,22 @@ export const LogIn = () => {
                 password: password
             })
         })
+
         if (!Response.ok) {
             setLogInFailed(true)
             return
         }
+
         const data = await Response.json()
         localStorage.setItem("token", data.token)
+        localStorage.setItem("user_id", data.user_id)
         setLogInFailed(false)
 
+        if (data.business_id) {
+            navigate("/business/" + data.business_id)
+        } else {
+            navigate("/user-profile")
+        }
     }
 
     return (
@@ -39,11 +48,21 @@ export const LogIn = () => {
                     <div className="col-6">
                         <div>
                             <label htmlFor="email">Email</label>
-                            <input type="text" name="email" onChange={e => setEmail(e.target.value)} value={email} />
+                            <input
+                                type="text"
+                                name="email"
+                                onChange={e => setEmail(e.target.value)}
+                                value={email}
+                            />
                         </div>
                         <div>
                             <label htmlFor="password">password</label>
-                            <input type="password" name="password" onChange={e => setPassword(e.target.value)} value={password} />
+                            <input
+                                type="password"
+                                name="password"
+                                onChange={e => setPassword(e.target.value)}
+                                value={password}
+                            />
                         </div>
                     </div>
                     <div className="col-3"></div>
@@ -53,7 +72,6 @@ export const LogIn = () => {
                     <a href="/forgot-password">Forgot password?</a>
                 </p>
             </div>
-
         </>
     )
 }

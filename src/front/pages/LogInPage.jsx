@@ -1,34 +1,41 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-
 
 export const LogIn = () => {
     const BASE_URL = import.meta.env.VITE_BACKEND_URL
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [logInFailed, setLogInFailed] = useState(false)
+    const navigate = useNavigate()
 
     const handleLogin = async () => {
         const Response = await fetch(BASE_URL + "/login", {
             method: "POST",
             headers: {
-                "content-Type": "application/json"
+                "Content-Type": "application/json"
             },
-            body: JSON.stringinify(
-                {
-                    "email": email,
-                    "pasword": password
-                }
-            )
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
         })
+
         if (!Response.ok) {
             setLogInFailed(true)
             return
         }
+
         const data = await Response.json()
-        localStorage.settings("token", data.token)
+        localStorage.setItem("token", data.token)
+        localStorage.setItem("user_id", data.user_id)
         setLogInFailed(false)
 
+        if (data.business_id) {
+            navigate("/business/" + data.business_id)
+        } else {
+            navigate("/user-profile")
+        }
     }
 
     return (
@@ -40,17 +47,30 @@ export const LogIn = () => {
                     <div className="col-3"></div>
                     <div className="col-6">
                         <div>
-                            <label for="email">Email</label>
-                            <input type="text" name="email" onChange={e => setEmail(e.target.value)} value={email} />
+                            <label htmlFor="email">Email</label>
+                            <input
+                                type="text"
+                                name="email"
+                                onChange={e => setEmail(e.target.value)}
+                                value={email}
+                            />
                         </div>
                         <div>
-                            <label for="password">password</label>
-                            <input type="password" name="password" onChange={e => setPassword(e.target.value)} value={password} />
+                            <label htmlFor="password">password</label>
+                            <input
+                                type="password"
+                                name="password"
+                                onChange={e => setPassword(e.target.value)}
+                                value={password}
+                            />
                         </div>
                     </div>
                     <div className="col-3"></div>
                 </div>
                 <button className="btn btn-success" onClick={handleLogin}>Log In</button>
+                <p className="mt-3">
+                    <a href="/forgot-password">Forgot password?</a>
+                </p>
             </div>
         </>
     )

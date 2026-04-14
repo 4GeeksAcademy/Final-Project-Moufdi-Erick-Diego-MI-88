@@ -38,7 +38,7 @@ export const Navbar = () => {
               <a className="nav-link" href="#">Contact Us</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/user-profile">Sign In</a>
+              <a className="nav-link" href="/user-profile">Log In</a>
             </li>
           </ul>
           <form className="d-flex" role="search">

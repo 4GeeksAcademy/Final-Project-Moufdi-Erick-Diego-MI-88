@@ -15,9 +15,9 @@ export const Footer = () => {
                <a className="navbar-brand" href="#">
           <img src={logoImageUrl} style={{ width: "220px" }} />
         </a><br></br>
-              <a href="#" className="text-white-50 small">Home</a><br></br>
-              <a href="#" className="text-white-50 small">Businesses</a><br></br>
-              <a href="#" className="text-white-50 small">Contact Us</a>
+              <a href="/" className="text-white-50 small">Home</a><br></br>
+              <a href="/about-us" className="text-white-50 small">About Us</a><br></br>
+              <a href="/contact-us" className="text-white-50 small">Contact Us</a>
             </div>
           </div>
 

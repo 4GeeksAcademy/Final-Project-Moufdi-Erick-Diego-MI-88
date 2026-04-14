@@ -13,16 +13,30 @@ export default function ContactUs() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // For now: just simulate sending
-    console.log("Contact form submitted:", form);
+    try {
+            const res = await fetch("/api/contact-us",  {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-    setStatus("Message sent successfully!");
-    setForm({ name: "", email: "", message: "" });
+      const data = await res.json();
 
-    setTimeout(() => setStatus(""), 3000);
+      if (data.success) {
+        setStatus("Message sent successfully!");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        setStatus("Something went wrong.");
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus("Server error.");
+    }
   };
 
   return (

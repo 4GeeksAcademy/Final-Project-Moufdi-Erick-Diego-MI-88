@@ -18,7 +18,8 @@ import { DiscountPage } from "./components/DiscountPage";
 import AboutUs from "./pages/AboutUsPage";
 import ContactUs from "./pages/contact-us";
 
-
+// moufdi did this for fixing the import path to match the pages folder
+import AdminMessages from "./pages/AdminMessages";
 export const router = createBrowserRouter(
   createRoutesFromElements(
     // CreateRoutesFromElements function allows you to build route elements declaratively.
@@ -28,20 +29,22 @@ export const router = createBrowserRouter(
     // Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
 
     // Root Route: All navigation will start from here.
-    <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
-
+    <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
       {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
       <Route path="/" element={<Home />} />
-      <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
-      <Route path="/demo" element={<Demo />} /> 
+      <Route path="/single/:theId" element={<Single />} />{" "}
+      {/* Dynamic route for single items */}
+      <Route path="/demo" element={<Demo />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<LogIn />} />
-        <Route path="/user-profile" element={<UserProfilePage />} />
-      <Route path="/business-signup" element={<BusinessSignUp  />} />
+      <Route path="/user-profile" element={<UserProfilePage />} />
+      <Route path="/business-signup" element={<BusinessSignUp />} />
       <Route path="/business/:id" element={<BusinessPageProfile />} />
       <Route path="/business/:id/discounts" element={<DiscountPage />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/contact-us" element={<ContactUs />} />
-    </Route>
-  )
+      {/* moufdi did this for creating the route to view the admin dashboard */}
+      <Route path="/admin" element={<AdminMessages />} />
+    </Route>,
+  ),
 );

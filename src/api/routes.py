@@ -8,7 +8,8 @@ from flask_cors import CORS
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import os
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename 
+import requests  # moufdi did this for the Formsubmit reply feature
 
 # moufdi
 from .services.google_maps_service import get_coordinates
@@ -18,29 +19,33 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
+# moufdi did this for creating the contact messages table dynamically in the database
+
+
+class ContactMessage(db.Model):
+    __tablename__ = "contact_messages"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
-
     response_body = {
         "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
     }
-
     return jsonify(response_body), 200
 
 
 @api.route("/signup", methods=["POST"])
 def handle_sign_up():
-    body = request.json  # {"email":----, and "password":----}
-
-    # checking the data base to make sure  that email is already used
+    body = request.json
     potential_user = db.session.execute(
         select(User).where(User.email == body["email"])
     ).scalar_one_or_none()
     if potential_user is not None:
         return jsonify({"msg": "user with that email already exist"}), 400
-
-    # creating the user oobject
     new_user = User()
     new_user.first_name = body["first_name"]
     new_user.last_name = body["last_name"]
@@ -96,14 +101,11 @@ def handle_business_sign_up():
 @api.route("/login", methods=["POST"])
 def create_token():
     body = request.json
-
     user = User.query.filter_by(
         email=body["email"], password=body["password"]
     ).first()
-
     if user is None:
         return jsonify({"msg": "Bad email or password"}), 401
-
     access_token = create_access_token(identity=str(user.id))
 
     return jsonify({
@@ -200,17 +202,14 @@ def get_business_discounts(business_id):
 @api.route("/business/<int:business_id>/discounts", methods=["POST"])
 def create_discount(business_id):
     body = request.get_json()
-
     new_discount = Discount(
         discount_title=body["discount_title"],
         description=body["description"],
         percentage_rate=body["percentage_rate"],
         business_id=business_id
     )
-
     db.session.add(new_discount)
     db.session.commit()
-
     return jsonify(new_discount.serialize()), 201
 
 @api.route("/business/<int:business_id>/discounts/<int:discount_id>", methods=["PUT"])
@@ -247,8 +246,7 @@ def delete_discount(business_id, discount_id):
 
 @api.route('/geocode', methods=['GET'])
 def geocode():
-    address = request.args.get('address')  # gets the address from URL query
-    # calls your service and returns JSON
+    address = request.args.get('address')
     return jsonify(get_coordinates(address))
 
 @api.route('/user', methods=['GET'])

@@ -45,6 +45,8 @@ export const router = createBrowserRouter(
         <Route path="/business/:id/discounts" element={<DiscountPage />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/admin/messages" element={<AdminMessages />} />
       </Route>
     )
 );

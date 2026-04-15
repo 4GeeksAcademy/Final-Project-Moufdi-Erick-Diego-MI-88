@@ -90,7 +90,7 @@ export const Hero = () => {
       url(${heroImageUrl})
     `,
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: "top",
     minHeight: "600px"
   }}
 ></div>

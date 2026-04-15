@@ -42,9 +42,14 @@ def handle_sign_up():
 
     # creating the user oobject
     new_user = User()
+    new_user.first_name = body["first_name"]
+    new_user.last_name = body["last_name"]
     new_user.email = body["email"]
     new_user.password = body["password"]
     new_user.is_active = True
+    new_user.phone = body.get("phone")
+    new_user.city = body.get("city")
+    new_user.date_of_birth = body.get("date_of_birth")
 
     # adding user to the date base
     db.session.add(new_user)
@@ -245,3 +250,17 @@ def geocode():
     address = request.args.get('address')  # gets the address from URL query
     # calls your service and returns JSON
     return jsonify(get_coordinates(address))
+
+@api.route('/user', methods=['GET'])
+@jwt_required()
+def get_user_profile():
+    user_id = get_jwt_identity()  # gets the user id from the JWT token
+    user = User.query.get(user_id)  # fetches the user from the database
+    if user is None:
+        return jsonify({"msg": "User not found"}), 404
+    return jsonify(user.serialize()), 200
+
+@api.route("/businesses", methods=["GET"])
+def get_all_businesses():
+    all_businesses = Business.query.all()
+    return jsonify([business.serialize() for business in all_businesses]), 200

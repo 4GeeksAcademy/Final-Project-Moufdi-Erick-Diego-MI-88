@@ -1,39 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BusinessCard } from "../components/BusinessCard";
 import { HeroSubPages } from "../components/HeroSubPages";
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export const UserProfilePage = () => {
     const [activeTab, setActiveTab] = useState("personal");
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate()
+    const initials = user ? user.first_name[0] + user.last_name[0] : ""
 
-    const favorites = [
-        {
-            business_name: "Casa Juancho",
-            type_of_business: "Restaurant",
-            business_phone_number: "(305) 555-0101",
-            business_address: "2436 SW 8th St, Miami FL"
-        },
-        {
-            business_name: "LegalEdge",
-            type_of_business: "Professional Services",
-            business_phone_number: "(305) 555-0202",
-            business_address: "1200 Brickell Ave, Miami FL"
-        },
-        {
-            business_name: "FixIt Pro",
-            type_of_business: "Home Services",
-            business_phone_number: "(305) 555-0303",
-            business_address: "870 NW 42nd Ave, Miami FL"
-        },
-        {
-            business_name: "Nail Studio",
-            type_of_business: "Beauty",
-            business_phone_number: "(305) 555-0404",
-            business_address: "3250 NE 1st Ave, Miami FL"
-        },
-    ];
+    useEffect(() => {
+        const fetchUser = async () => {
+            const token = localStorage.getItem("token");
+            const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
+            const response = await fetch(BASE_URL + "/user", {
+                methods: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setUser(data);
+            } 
+        };
+        fetchUser();
+    
+    }, [])
+
+
+    const handleLogout = () => {
+        localStorage.removeItem("token")
+        localStorage.removeItem("user_id")
+        navigate("/")
+    }
 
     return (
 
@@ -53,12 +56,12 @@ export const UserProfilePage = () => {
                                     className="rounded-circle d-flex align-items-center justify-content-center"
                                     style={{ width: "90px", height: "90px", fontSize: "2rem", background: "#ffde59" }}
                                 >
-                                    ER
+                                    {initials}
                                 </div>
                             </div>
 
-                            <h6 className="fw-bold mb-0">Erick de los Reyes</h6>
-                            <small className="text-muted">erick@email.com</small>
+                            <h6 className="fw-bold mb-0">{user?.first_name} {user?.last_name}</h6>
+                            <small className="text-muted">{user?.email}</small>
 
                             <hr />
 
@@ -97,31 +100,35 @@ export const UserProfilePage = () => {
                                     <div className="row g-3">
                                         <div className="col-md-6">
                                             <label className="form-label text-muted small">First name</label>
-                                            <input type="text" className="form-control" defaultValue="Erick" readOnly />
+                                            <input type="text" className="form-control" defaultValue={user?.first_name} />
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label text-muted small">Last name</label>
-                                            <input type="text" className="form-control" defaultValue="de los Reyes" readOnly />
+                                            <input type="text" className="form-control" defaultValue={user?.last_name} readOnly />
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label text-muted small">Email</label>
-                                            <input type="email" className="form-control" defaultValue="erick@email.com" readOnly />
+                                            <input type="email" className="form-control" defaultValue={user?.email} readOnly />
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label text-muted small">Phone</label>
-                                            <input type="tel" className="form-control" defaultValue="+1 (305) 555-0101" readOnly />
+                                            <input type="tel" className="form-control" defaultValue={user?.phone} readOnly />
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label text-muted small">City</label>
-                                            <input type="text" className="form-control" defaultValue="Miami, FL" readOnly />
+                                            <input type="text" className="form-control" defaultValue={user?.city} readOnly />
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label text-muted small">Date of birth</label>
-                                            <input type="text" className="form-control" defaultValue="Jan 1, 1990" readOnly />
+                                            <input type="text" className="form-control" defaultValue={user?.date_of_birth} readOnly />
                                         </div>
                                     </div>
                                     <button className="button btn btn-warning mt-4">Edit profile</button>
+                                    <button className="ms-2 btn btn-danger mt-4" onClick={handleLogout}>
+                                        Logout
+                                    </button>
                                 </div>
+                               
                             )}
 
                             {/* ── Favorites ── */}

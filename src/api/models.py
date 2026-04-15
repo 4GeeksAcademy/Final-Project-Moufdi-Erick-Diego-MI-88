@@ -9,8 +9,13 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
+    first_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    last_name: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
+    phone: Mapped[str] = mapped_column(String(120), nullable=True)
+    city: Mapped[str] = mapped_column(String(120), nullable=True)
+    date_of_birth: Mapped[str] = mapped_column(String(120), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     
     business_id: Mapped[int | None] = mapped_column(ForeignKey("business.id"), nullable=True)
@@ -19,7 +24,13 @@ class User(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
             "email": self.email,
+            "phone": self.phone,
+            "city": self.city,
+            "date_of_birth": self.date_of_birth,
+
             # do not serialize the password, its a security breach
         }
     

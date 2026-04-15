@@ -23,17 +23,33 @@ export const Navbar = () => {
                 Services
               </a>
               <ul className="dropdown-menu">
-                <li><a className="dropdown-item" href="#">Restaurants</a></li>
-                <li><a className="dropdown-item" href="#">Home Improve</a></li>
+                <li><a className="dropdown-item" href="#">All Categories</a></li>
                 <li><hr className="dropdown-divider"></hr></li>
-                <li><a className="dropdown-item" href="#">Lawyers</a></li>
+                <li><a className="dropdown-item" href="#">Auto Services</a></li>
+                <li><a className="dropdown-item" href="#">Beauty</a></li>
+                <li><a className="dropdown-item" href="#">Education</a></li>
+                <li><a className="dropdown-item" href="#">Events</a></li>
+                <li><a className="dropdown-item" href="#">Fitness</a></li>
+                <li><a className="dropdown-item" href="#">Food</a></li>
+                <li><a className="dropdown-item" href="#">Health</a></li>
+                <li><a className="dropdown-item" href="#">Home Services</a></li>
+                <li><a className="dropdown-item" href="#">Pet Services</a></li>
+                <li><a className="dropdown-item" href="#">Professional Services</a></li>
+                <li><a className="dropdown-item" href="#">Real State</a></li>
+                <li><a className="dropdown-item" href="#">Retail</a></li>
+                <li><a className="dropdown-item" href="#">Technology</a></li>
+                <li><a className="dropdown-item" href="#">Travel</a></li>
+                <li><a className="dropdown-item" href="#">Other</a></li>
               </ul>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/about-us">About Us</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">Contact Us</a>
+              <a className="nav-link" href="/contact-us">Contact Us</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/login">Log In</a>
             </li>
           </ul>
           <form className="d-flex" role="search">

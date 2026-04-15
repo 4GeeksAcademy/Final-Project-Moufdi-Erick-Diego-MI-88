@@ -15,9 +15,9 @@ export const Footer = () => {
                <a className="navbar-brand" href="#">
           <img src={logoImageUrl} style={{ width: "220px" }} />
         </a><br></br>
-              <a href="#" className="text-white-50 small">Home</a><br></br>
-              <a href="#" className="text-white-50 small">Businesses</a><br></br>
-              <a href="#" className="text-white-50 small">Contact Us</a>
+              <a href="/" className="text-white-50 small">Home</a><br></br>
+              <a href="/about-us" className="text-white-50 small">About Us</a><br></br>
+              <a href="/contact-us" className="text-white-50 small">Contact Us</a>
             </div>
           </div>
 
@@ -40,9 +40,9 @@ export const Footer = () => {
             <h3 className="text-center fs-4">Social Media</h3>
             <div className="d-flex justify-content-center gap-3 mb-3">
               
-              <a href="#"><i className="col-4 fa-brands fa-square-instagram fa-2xl" style={{color: "#ffde59"}}></i></a><br></br>
-              <a href="#"><i className="col-4 fa-brands fa-square-facebook fa-2xl" style={{color: "#ffde59"}}></i></a><br></br>
-              <a href="#"><i className="col-4 fa-brands fa-linkedin fa-2xl" style={{color: "#ffde59"}}></i></a>
+              <a href="https://www.instagram.com"><i className="col-4 fa-brands fa-square-instagram fa-2xl" style={{color: "#ffde59"}}></i></a><br></br>
+              <a href="https://www.facebook.com"><i className="col-4 fa-brands fa-square-facebook fa-2xl" style={{color: "#ffde59"}}></i></a><br></br>
+              <a href="https://www.linkedin.com"><i className="col-4 fa-brands fa-linkedin fa-2xl" style={{color: "#ffde59"}}></i></a>
             </div>
           </div>
         </div>

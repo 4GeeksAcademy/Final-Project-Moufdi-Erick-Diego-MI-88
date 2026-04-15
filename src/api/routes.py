@@ -47,9 +47,16 @@ def handle_sign_up():
     if potential_user is not None:
         return jsonify({"msg": "user with that email already exist"}), 400
     new_user = User()
+    new_user.first_name = body["first_name"]
+    new_user.last_name = body["last_name"]
     new_user.email = body["email"]
     new_user.password = body["password"]
     new_user.is_active = True
+    new_user.phone = body.get("phone")
+    new_user.city = body.get("city")
+    new_user.date_of_birth = body.get("date_of_birth")
+
+    # adding user to the date base
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"msg": "user was created"}), 201
@@ -242,49 +249,16 @@ def geocode():
     address = request.args.get('address')
     return jsonify(get_coordinates(address))
 
-# contact-us
+@api.route('/user', methods=['GET'])
+@jwt_required()
+def get_user_profile():
+    user_id = get_jwt_identity()  # gets the user id from the JWT token
+    user = User.query.get(user_id)  # fetches the user from the database
+    if user is None:
+        return jsonify({"msg": "User not found"}), 404
+    return jsonify(user.serialize()), 200
 
-
-@api.route('/contact-us', methods=['POST'])
-def contact():
-    data = request.get_json(force=True)
-    if not data:
-        return jsonify({"error": "No data received"}), 400
-    name = data.get("name")
-    email = data.get("email")
-    message = data.get("message")
-    if not all([name, email, message]):
-        return jsonify({"error": "Missing required fields"}), 400
-    new_message = ContactMessage(name=name, email=email, message=message)
-    db.session.add(new_message)
-    db.session.commit()
-    return jsonify({"success": True, "msg": "Message received"}), 200
-
-# moufdi did this for creating the admin endpoint that fetches all messages from the database
-
-
-@api.route('/admin/messages', methods=['GET'])
-def get_admin_messages():
-    messages = ContactMessage.query.order_by(ContactMessage.id.desc()).all()
-    result = [
-        {"id": m.id, "name": m.name, "email": m.email, "message": m.message}
-        for m in messages
-    ]
-    return jsonify(result), 200
-
-# moufdi did this for deleting a message from the database
-
-
-@api.route('/admin/messages/<int:message_id>', methods=['DELETE'])
-def delete_message(message_id):
-    msg = ContactMessage.query.get(message_id)
-    if not msg:
-        return jsonify({"error": "Message not found"}), 404
-    db.session.delete(msg)
-    db.session.commit()
-    return jsonify({"success": True, "msg": "Message deleted"}), 200
-
-    # moufdi did this for sending a reply to the user for free via Formsubmit
-
-
-
+@api.route("/businesses", methods=["GET"])
+def get_all_businesses():
+    all_businesses = Business.query.all()
+    return jsonify([business.serialize() for business in all_businesses]), 200

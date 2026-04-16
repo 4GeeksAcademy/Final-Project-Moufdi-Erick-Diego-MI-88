@@ -18,7 +18,8 @@ import { BusinessPageProfile } from "./pages/BusinessPageProfile";
 import { DiscountPage } from "./components/DiscountPage";
 import AboutUs from "./pages/AboutUsPage";
 import ContactUs from "./pages/contact-us";
-
+// moufdi added this for the learnmore page
+import { LearnMore } from "./pages/LearnMore";
 // moufdi did this for fixing the import path to match the pages folder
 import AdminMessages from "./pages/AdminMessages";
 export const router = createBrowserRouter(
@@ -47,6 +48,7 @@ export const router = createBrowserRouter(
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/admin/messages" element={<AdminMessages />} />
+        <Route path="/offer/:id" element={<LearnMore />} />
       </Route>
     )
 );

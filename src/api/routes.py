@@ -12,9 +12,7 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 
-# -------------------------
-# USER SIGNUP
-# -------------------------
+
 @api.route("/signup", methods=["POST"])
 def handle_sign_up():
     body = request.json
@@ -187,9 +185,7 @@ def delete_user_profile(user_id):
     return jsonify({"msg": "User deleted"}), 200
 
 
-# -------------------------
-# DISCOUNTS
-# -------------------------
+
 @api.route("/business/<int:business_id>/discounts", methods=["GET"])
 def get_business_discounts(business_id):
     discounts = Discount.query.filter_by(business_id=business_id).all()
@@ -213,18 +209,14 @@ def create_discount(business_id):
     return jsonify(new_discount.serialize()), 201
 
 
-# -------------------------
-# GEOCODE
-# -------------------------
+
 @api.route('/geocode', methods=['GET'])
 def geocode():
     address = request.args.get('address')
     return jsonify(get_coordinates(address))
 
 
-# -------------------------
-# GET USER PROFILE
-# -------------------------
+
 @api.route('/user', methods=['GET'])
 @jwt_required()
 def get_user_profile():
@@ -235,9 +227,7 @@ def get_user_profile():
     return jsonify(user.serialize()), 200
 
 
-# -------------------------
-# GET ALL BUSINESSES (DO NOT TOUCH)
-# -------------------------
+
 @api.route("/businesses", methods=["GET"])
 def get_all_businesses():
     all_businesses = Business.query.all()

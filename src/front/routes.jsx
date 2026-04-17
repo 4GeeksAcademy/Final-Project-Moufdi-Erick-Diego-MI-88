@@ -1,5 +1,3 @@
-// Import necessary components and functions from react-router-dom.
-
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -22,6 +20,7 @@ import ContactUs from "./pages/contact-us";
 import { LearnMore } from "./pages/LearnMore";
 // moufdi did this for fixing the import path to match the pages folder
 import AdminMessages from "./pages/AdminMessages";
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     // CreateRoutesFromElements function allows you to build route elements declaratively.
@@ -52,3 +51,4 @@ export const router = createBrowserRouter(
       </Route>
     )
 );
+

@@ -12,7 +12,6 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 
-
 @api.route("/signup", methods=["POST"])
 def handle_sign_up():
     body = request.json
@@ -99,6 +98,28 @@ def create_token():
 
     return jsonify({"msg": "Bad email or password"}), 401
 
+
+@api.route("/forgot-password/question", methods=["POST"])
+def get_security_question():
+    body = request.json
+
+    user = User.query.filter_by(email=body["email"]).first()
+    if user:
+        return jsonify({
+            "type": "user",
+            "security_question": user.security_question
+        }), 200
+
+    business = Business.query.filter_by(email=body["email"]).first()
+    if business:
+        return jsonify({
+            "type": "business",
+            "security_question": business.security_question
+        }), 200
+
+    return jsonify({"msg": "Email not found"}), 404
+
+
 @api.route("/reset-password", methods=["PUT"])
 def reset_password():
     body = request.get_json()
@@ -123,26 +144,6 @@ def reset_password():
 
     return jsonify({"msg": "User or business not found"}), 404
 
-@api.route("/forgot-password/question", methods=["POST"])
-def get_security_question():
-    body = request.json
-
-    user = User.query.filter_by(email=body["email"]).first()
-    if user:
-        return jsonify({
-            "type": "user",
-            "security_question": user.security_question
-        }), 200
-
-    business = Business.query.filter_by(email=body["email"]).first()
-    if business:
-        return jsonify({
-            "type": "business",
-            "security_question": business.security_question
-        }), 200
-
-    return jsonify({"msg": "Email not found"}), 404
-
 
 @api.route("/business/<int:business_id>", methods=["GET"])
 def get_business(business_id):
@@ -150,7 +151,6 @@ def get_business(business_id):
     if not business:
         return jsonify({"msg": "Business not found"}), 404
     return jsonify(business.serialize()), 200
-
 
 
 @api.route("/business/<int:business_id>", methods=["PUT"])
@@ -171,6 +171,7 @@ def update_business(business_id):
     db.session.commit()
 
     return jsonify(business.serialize()), 200
+
 
 @api.route("/business/<int:business_id>/upload-image", methods=["POST"])
 def upload_business_image(business_id):
@@ -199,6 +200,7 @@ def upload_business_image(business_id):
 
     return jsonify(business.serialize()), 200
 
+
 @api.route("/user/<int:user_id>", methods=["DELETE"])
 def delete_user_profile(user_id):
     user = User.query.get(user_id)
@@ -210,7 +212,6 @@ def delete_user_profile(user_id):
     db.session.commit()
 
     return jsonify({"msg": "User deleted"}), 200
-
 
 
 @api.route("/business/<int:business_id>/discounts", methods=["GET"])
@@ -236,12 +237,10 @@ def create_discount(business_id):
     return jsonify(new_discount.serialize()), 201
 
 
-
 @api.route('/geocode', methods=['GET'])
 def geocode():
     address = request.args.get('address')
     return jsonify(get_coordinates(address))
-
 
 
 @api.route('/user', methods=['GET'])
@@ -254,8 +253,7 @@ def get_user_profile():
     return jsonify(user.serialize()), 200
 
 
-
 @api.route("/businesses", methods=["GET"])
 def get_all_businesses():
     all_businesses = Business.query.all()
-    return jsonify([business.serialize() for business in all_businesses]), 200exit()
+    return jsonify([business.serialize() for business in all_businesses]), 200

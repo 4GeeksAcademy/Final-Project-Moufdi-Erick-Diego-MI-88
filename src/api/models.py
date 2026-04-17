@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, Enum, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, foreign, relationship
+from sqlalchemy import String, Boolean, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 import enum
 
 
@@ -17,9 +17,10 @@ class User(db.Model):
     city: Mapped[str] = mapped_column(String(120), nullable=True)
     date_of_birth: Mapped[str] = mapped_column(String(120), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
-    
-    business_id: Mapped[int | None] = mapped_column(ForeignKey("business.id"), nullable=True)
+    security_question: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    security_answer: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
+    business_id: Mapped[int | None] = mapped_column(ForeignKey("business.id"), nullable=True)
 
     def serialize(self):
         return {
@@ -30,11 +31,9 @@ class User(db.Model):
             "phone": self.phone,
             "city": self.city,
             "date_of_birth": self.date_of_birth,
-
-            # do not serialize the password, its a security breach
         }
-    
-   
+
+
 class BusinessType(enum.Enum):
     FOOD = "food"
     RETAIL = "retail"
@@ -65,6 +64,8 @@ class Business(db.Model):
     business_image: Mapped[str] = mapped_column(String(500), nullable=True)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
+    security_question: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    security_answer: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     def serialize(self):
         return {
@@ -78,6 +79,7 @@ class Business(db.Model):
             "business_description": self.business_description,
             "business_image": self.business_image
         }
+
 
 class Discount(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

@@ -2,12 +2,10 @@ import React, { useState } from "react";
 
 export const ForgotPassword = () => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-
   const [email, setEmail] = useState("");
   const [securityQuestion, setSecurityQuestion] = useState("");
   const [securityAnswer, setSecurityAnswer] = useState("");
   const [newPassword, setNewPassword] = useState("");
-
   const [questionLoaded, setQuestionLoaded] = useState(false);
   const [resetDone, setResetDone] = useState(false);
   const [resetFailed, setResetFailed] = useState(false);

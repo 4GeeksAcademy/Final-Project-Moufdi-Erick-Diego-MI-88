@@ -12,6 +12,8 @@ export const BusinessSignUp = () => {
   const [services, setServices] = useState("");
   const [businessDescription, setBusinessDescription] = useState("");
   const [typeOfBusiness, setTypeOfBusiness] = useState("");
+  const [securityQuestion, setSecurityQuestion] = useState("");
+  const [securityAnswer, setSecurityAnswer] = useState("");
   const [password, setPassword] = useState("");
   const [signUpFailed, setSignUpFailed] = useState(false);
 
@@ -32,9 +34,9 @@ export const BusinessSignUp = () => {
         services: services,
         business_description: businessDescription,
         type_of_business: typeOfBusiness,
-        password: password,
         security_question: securityQuestion,
-        security_answer: securityAnswer
+        security_answer: securityAnswer,
+        password: password
       })
     });
 
@@ -202,6 +204,7 @@ export const BusinessSignUp = () => {
                           <option value="OTHER">Other</option>
                         </select>
                       </div>
+
                       <div className="mb-4">
                         <label className="form-label text-white fw-bold fs-5">
                           Security Question
@@ -231,6 +234,7 @@ export const BusinessSignUp = () => {
                           onChange={(e) => setSecurityAnswer(e.target.value)}
                         />
                       </div>
+
                       <div className="mb-4">
                         <label className="form-label text-white fw-bold fs-5">
                           Password

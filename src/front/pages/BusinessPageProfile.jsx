@@ -19,22 +19,22 @@ export const BusinessPageProfile = () => {
     type_of_business: ""
   });
 
+  const fetchBusiness = async () => {
+    const response = await fetch(BASE_URL + "/business/" + id);
+    if (!response.ok) return;
+
+    const data = await response.json();
+    setBusiness(data);
+    setForm({
+      business_name: data.business_name || "",
+      business_address: data.business_address || "",
+      business_phone_number: data.business_phone_number || "",
+      business_description: data.business_description || "",
+      type_of_business: data.type_of_business || ""
+    });
+  };
+
   useEffect(() => {
-    const fetchBusiness = async () => {
-      const response = await fetch(BASE_URL + "/business/" + id);
-      if (!response.ok) return;
-
-      const data = await response.json();
-      setBusiness(data);
-      setForm({
-        business_name: data.business_name || "",
-        business_address: data.business_address || "",
-        business_phone_number: data.business_phone_number || "",
-        business_description: data.business_description || "",
-        type_of_business: data.type_of_business || ""
-      });
-    };
-
     fetchBusiness();
   }, [id, BASE_URL]);
 
@@ -58,45 +58,69 @@ export const BusinessPageProfile = () => {
   };
 
   const handleSave = async () => {
-    const response = await fetch(BASE_URL + "/business/" + id, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(form)
-    });
+  const response = await fetch(BASE_URL + "/business/" + id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(form)
+  });
 
-    if (!response.ok) return;
+  if (!response.ok) return;
 
-    let updatedBusiness = await response.json();
+  let updatedBusiness = await response.json();
 
-    if (selectedImage) {
-      const imageData = new FormData();
-      imageData.append("image", selectedImage);
+  if (selectedImage) {
+    const imageData = new FormData();
+    imageData.append("image", selectedImage);
 
-      const imageResponse = await fetch(
-        BASE_URL + "/business/" + id + "/upload-image",
-        {
-          method: "POST",
-          body: imageData
-        }
-      );
-
-      if (imageResponse.ok) {
-        updatedBusiness = await imageResponse.json();
+    const imageResponse = await fetch(
+      BASE_URL + "/business/" + id + "/upload-image",
+      {
+        method: "POST",
+        body: imageData
       }
+    );
+
+    if (imageResponse.ok) {
+      updatedBusiness = await imageResponse.json();
+    }
+  }
+
+  setBusiness(updatedBusiness);
+  setForm({
+    business_name: updatedBusiness.business_name || "",
+    business_address: updatedBusiness.business_address || "",
+    business_phone_number: updatedBusiness.business_phone_number || "",
+    business_description: updatedBusiness.business_description || "",
+    type_of_business: updatedBusiness.type_of_business || ""
+  });
+  setSelectedImage(null);
+  setIsEditing(false);
+};
+
+  const handleImageUpload = async () => {
+    if (!selectedImage) return;
+
+    const imageData = new FormData();
+    imageData.append("image", selectedImage);
+
+    const imageResponse = await fetch(
+      BASE_URL + "/business/" + id + "/upload-image",
+      {
+        method: "POST",
+        body: imageData
+      }
+    );
+
+    if (!imageResponse.ok) {
+      alert("Image upload failed.");
+      return;
     }
 
+    const updatedBusiness = await imageResponse.json();
     setBusiness(updatedBusiness);
-    setForm({
-      business_name: updatedBusiness.business_name || "",
-      business_address: updatedBusiness.business_address || "",
-      business_phone_number: updatedBusiness.business_phone_number || "",
-      business_description: updatedBusiness.business_description || "",
-      type_of_business: updatedBusiness.type_of_business || ""
-    });
     setSelectedImage(null);
-    setIsEditing(false);
   };
 
   const handleCancel = () => {
@@ -384,7 +408,6 @@ export const BusinessPageProfile = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

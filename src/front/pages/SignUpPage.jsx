@@ -10,6 +10,8 @@ export const SignUp = () => {
     const [phone, setPhone] = useState("")
     const [city, setCity] = useState("")
     const [dateOfBirth, setDateOfBirth] = useState("")
+    const [securityQuestion, setSecurityQuestion] = useState("")
+    const [securityAnswer, setSecurityAnswer] = useState("")
     const [signUpFailed, setSignUpFailed] = useState(false)
 
     const handleSignUp = async () => {
@@ -25,7 +27,9 @@ export const SignUp = () => {
                 password: password,
                 phone: phone,
                 city: city,
-                date_of_birth: dateOfBirth
+                date_of_birth: dateOfBirth,
+                security_question: securityQuestion,
+                security_answer: securityAnswer
             })
         })
 
@@ -145,6 +149,36 @@ export const SignUp = () => {
                                                 placeholder="Enter date of birth"
                                                 onChange={e => setDateOfBirth(e.target.value)}
                                                 value={dateOfBirth}
+                                            />
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label className="form-label text-white fw-bold fs-5">
+                                                Security Question
+                                            </label>
+                                            <select
+                                                className="form-control form-control-lg rounded-4 border-0 shadow"
+                                                value={securityQuestion}
+                                                onChange={(e) => setSecurityQuestion(e.target.value)}
+                                            >
+                                                <option value="">Select a question</option>
+                                                <option value="What is your favorite color?">What is your favorite color?</option>
+                                                <option value="What city were you born in?">What city were you born in?</option>
+                                                <option value="What was your first pet’s name?">What was your first pet’s name?</option>
+                                                <option value="What is your mother’s maiden name?">What is your mother’s maiden name?</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label className="form-label text-white fw-bold fs-5">
+                                                Answer
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control form-control-lg rounded-4 border-0 shadow"
+                                                placeholder="Enter your answer"
+                                                value={securityAnswer}
+                                                onChange={(e) => setSecurityAnswer(e.target.value)}
                                             />
                                         </div>
 

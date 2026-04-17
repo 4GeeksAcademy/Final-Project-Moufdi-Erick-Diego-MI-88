@@ -4,8 +4,14 @@ from sqlalchemy.orm import Mapped, mapped_column
 import enum
 
 
-db = SQLAlchemy()
 
+db = SQLAlchemy()
+class ContactMessage(db.Model):
+    __tablename__ = "contact_messages"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    message = db.Column(db.Text, nullable=False)
 
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from .models import db, User, Business, Discount
+from .models import db, User, Business, Discount, ContactMessage
 from .utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select
@@ -188,7 +188,8 @@ def upload_business_image(business_id):
     if image.filename == "":
         return jsonify({"msg": "No selected file"}), 400
 
-    upload_folder = os.path.join(os.path.dirname(__file__), "../static/uploads")
+    upload_folder = os.path.join(
+        os.path.dirname(__file__), "../static/uploads")
     os.makedirs(upload_folder, exist_ok=True)
 
     filename = secure_filename(image.filename)
@@ -241,6 +242,42 @@ def create_discount(business_id):
 def geocode():
     address = request.args.get('address')
     return jsonify(get_coordinates(address))
+
+
+@api.route('/contact-us', methods=['POST'])
+def contact():
+    data = request.get_json(force=True)
+    if not data:
+        return jsonify({"error": "No data received"}), 400
+    name = data.get("name")
+    email = data.get("email")
+    message = data.get("message")
+    if not all([name, email, message]):
+        return jsonify({"error": "Missing required fields"}), 400
+    new_message = ContactMessage(name=name, email=email, message=message)
+    db.session.add(new_message)
+    db.session.commit()
+    return jsonify({"success": True, "msg": "Message received"}), 200
+
+
+@api.route('/admin/messages/<int:message_id>', methods=['DELETE'])
+def delete_message(message_id):
+    msg = ContactMessage.query.get(message_id)
+    if not msg:
+        return jsonify({"error": "Message not found"}), 404
+    db.session.delete(msg)
+    db.session.commit()
+    return jsonify({"success": True, "msg": "Message deleted"}), 200
+
+
+@api.route('/admin/messages', methods=['GET'])
+def get_admin_messages():
+    messages = ContactMessage.query.order_by(ContactMessage.id.desc()).all()
+    result = [
+        {"id": m.id, "name": m.name, "email": m.email, "message": m.message}
+        for m in messages
+    ]
+    return jsonify(result), 200
 
 
 @api.route('/user', methods=['GET'])

@@ -33,6 +33,8 @@ def handle_sign_up():
     new_user.phone = body.get("phone")
     new_user.city = body.get("city")
     new_user.date_of_birth = body.get("date_of_birth")
+    new_user.security_question = body["security_question"]
+    new_user.security_answer = body["security_answer"]
 
     db.session.add(new_user)
     db.session.commit()
@@ -61,6 +63,8 @@ def handle_business_sign_up():
     new_business.type_of_business = body["type_of_business"]
     new_business.email = body["email"]
     new_business.password = body["password"]
+    new_business.security_question = body["security_question"]
+    new_business.security_answer = body["security_answer"]
 
     db.session.add(new_business)
     db.session.commit()
@@ -95,26 +99,49 @@ def create_token():
 
     return jsonify({"msg": "Bad email or password"}), 401
 
-
 @api.route("/reset-password", methods=["PUT"])
 def reset_password():
     body = request.get_json()
 
     user = User.query.filter_by(email=body["email"]).first()
-    if user is not None:
+    if user:
+        if user.security_answer != body["security_answer"]:
+            return jsonify({"msg": "Wrong answer"}), 401
+
         user.password = body["new_password"]
         db.session.commit()
         return jsonify({"msg": "Password updated"}), 200
 
     business = Business.query.filter_by(email=body["email"]).first()
-    if business is not None:
+    if business:
+        if business.security_answer != body["security_answer"]:
+            return jsonify({"msg": "Wrong answer"}), 401
+
         business.password = body["new_password"]
         db.session.commit()
         return jsonify({"msg": "Password updated"}), 200
 
     return jsonify({"msg": "User or business not found"}), 404
 
+@api.route("/forgot-password/question", methods=["POST"])
+def get_security_question():
+    body = request.json
 
+    user = User.query.filter_by(email=body["email"]).first()
+    if user:
+        return jsonify({
+            "type": "user",
+            "security_question": user.security_question
+        }), 200
+
+    business = Business.query.filter_by(email=body["email"]).first()
+    if business:
+        return jsonify({
+            "type": "business",
+            "security_question": business.security_question
+        }), 200
+
+    return jsonify({"msg": "Email not found"}), 404
 
 
 @api.route("/business/<int:business_id>", methods=["GET"])
@@ -231,4 +258,4 @@ def get_user_profile():
 @api.route("/businesses", methods=["GET"])
 def get_all_businesses():
     all_businesses = Business.query.all()
-    return jsonify([business.serialize() for business in all_businesses]), 200
+    return jsonify([business.serialize() for business in all_businesses]), 200exit()

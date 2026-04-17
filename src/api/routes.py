@@ -88,6 +88,8 @@ def handle_business_sign_up():
     new_user.password = body["password"]
     new_user.is_active = True
     new_user.business_id = new_business.id
+    new_user.first_name = body.get("first_name", "")
+    new_user.last_name = body.get("last_name", "")  
 
     db.session.add(new_user)
     db.session.commit()
@@ -252,13 +254,56 @@ def geocode():
 @api.route('/user', methods=['GET'])
 @jwt_required()
 def get_user_profile():
-    user_id = get_jwt_identity()  # gets the user id from the JWT token
-    user = User.query.get(user_id)  # fetches the user from the database
-    if user is None:
-        return jsonify({"msg": "User not found"}), 404
-    return jsonify(user.serialize()), 200
+    try:
+        user_id = int(get_jwt_identity())
+        user = User.query.get(user_id)
+
+        if user is None:
+            return jsonify({"msg": "User not found"}), 404
+
+        return jsonify(user.serialize()), 200
+
+    except Exception as e:
+        print("ERROR IN /user:", e)
+        return jsonify({"msg": str(e)}), 500
 
 @api.route("/businesses", methods=["GET"])
 def get_all_businesses():
     all_businesses = Business.query.all()
     return jsonify([business.serialize() for business in all_businesses]), 200
+
+
+@api.route("/favorite/business/<int:business_id>", methods=["POST"])
+@jwt_required()
+def add_favorite_business(business_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    business = Business.query.get(business_id)
+
+    if user is None or business is None:
+        return jsonify({"msg": "User or business not found"}), 404
+
+    if business not in user.favorite_businesses:
+        user.favorite_businesses.append(business)
+        db.session.commit()
+
+    return jsonify({"favorite_businesses": [b.serialize() for b in user.favorite_businesses]}), 200
+
+@api.route("/favorite/business/<int:business_id>", methods=["DELETE"])
+@jwt_required()
+def remove_favorite_business(business_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    business = Business.query.get(business_id)
+
+    if user is None or business is None:
+        return jsonify({"msg": "User or business not found"}), 404
+
+    if business in user.favorite_businesses:
+        user.favorite_businesses.remove(business)
+        db.session.commit()
+
+    return jsonify({"favorite_businesses": [b.serialize() for b in user.favorite_businesses]}), 200
+ 
+
+   

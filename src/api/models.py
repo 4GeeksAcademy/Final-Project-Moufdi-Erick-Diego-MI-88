@@ -1,11 +1,19 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Boolean, Enum, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, foreign, relationship
+from sqlalchemy import Table, Column
+
 import enum
 
 
 db = SQLAlchemy()
 
+favorite_businesses_table = Table(
+    "favorite_businesses",
+    db.metadata,
+    Column("user_id", ForeignKey("user.id"), primary_key=True),
+    Column("business_id", ForeignKey("business.id"), primary_key=True)
+)
 
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -17,8 +25,12 @@ class User(db.Model):
     city: Mapped[str] = mapped_column(String(120), nullable=True)
     date_of_birth: Mapped[str] = mapped_column(String(120), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
-    
     business_id: Mapped[int | None] = mapped_column(ForeignKey("business.id"), nullable=True)
+    
+    favorite_businesses: Mapped[list["Business"]] = relationship(
+        secondary=favorite_businesses_table,
+        back_populates="favorited_by"
+    )
 
 
     def serialize(self):
@@ -30,6 +42,7 @@ class User(db.Model):
             "phone": self.phone,
             "city": self.city,
             "date_of_birth": self.date_of_birth,
+            "favorite_businesses": [business.serialize() for business in self.favorite_businesses]
 
             # do not serialize the password, its a security breach
         }
@@ -62,6 +75,10 @@ class Business(db.Model):
     business_description: Mapped[str] = mapped_column(String(255))
     business_image: Mapped[str] = mapped_column(String(255), nullable=True)
     discounts: Mapped[list["Discount"]] = relationship(backref="business", cascade="all, delete-orphan")
+    favorited_by: Mapped[list["User"]] = relationship(
+        secondary=favorite_businesses_table,
+        back_populates="favorite_businesses"
+    )   
 
     def serialize(self):
         return {
@@ -72,6 +89,7 @@ class Business(db.Model):
             "business_address": self.business_address,
             "business_description": self.business_description,
             "business_image": self.business_image
+            
         }
 
 class Discount(db.Model):
@@ -89,3 +107,4 @@ class Discount(db.Model):
             "percentage_rate": self.percentage_rate,
             "business_id": self.business_id
         }
+    

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import businessSignUpPicture from "../assets/img/businessSignUp-Picture.png";
 
 export const BusinessSignUp = () => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  const navigate = useNavigate();
 
   const [businessName, setBusinessName] = useState("");
   const [address, setAddress] = useState("");
@@ -16,6 +18,7 @@ export const BusinessSignUp = () => {
   const [securityAnswer, setSecurityAnswer] = useState("");
   const [password, setPassword] = useState("");
   const [signUpFailed, setSignUpFailed] = useState(false);
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -42,12 +45,17 @@ export const BusinessSignUp = () => {
 
     if (!response.ok) {
       setSignUpFailed(true);
+      setSignUpSuccess(false);
       return;
     }
 
     const data = await response.json();
     setSignUpFailed(false);
-    console.log(data);
+    setSignUpSuccess(true);
+
+    setTimeout(() => {
+      navigate("/business/" + data.business_id);
+    }, 1200);
   };
 
   return (
@@ -70,6 +78,12 @@ export const BusinessSignUp = () => {
                 {signUpFailed ? (
                   <div className="alert alert-danger text-center">
                     Sign up failed
+                  </div>
+                ) : null}
+
+                {signUpSuccess ? (
+                  <div className="alert alert-success text-center">
+                    Sign up successful
                   </div>
                 ) : null}
 

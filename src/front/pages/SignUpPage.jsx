@@ -1,21 +1,25 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const SignUp = () => {
-    const BASE_URL = import.meta.env.VITE_BACKEND_URL
-    const [firstName, setFirstName] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [phone, setPhone] = useState("")
-    const [city, setCity] = useState("")
-    const [dateOfBirth, setDateOfBirth] = useState("")
-    const [securityQuestion, setSecurityQuestion] = useState("")
-    const [securityAnswer, setSecurityAnswer] = useState("")
-    const [signUpFailed, setSignUpFailed] = useState(false)
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+    const navigate = useNavigate();
+
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [phone, setPhone] = useState("");
+    const [city, setCity] = useState("");
+    const [dateOfBirth, setDateOfBirth] = useState("");
+    const [securityQuestion, setSecurityQuestion] = useState("");
+    const [securityAnswer, setSecurityAnswer] = useState("");
+    const [signUpFailed, setSignUpFailed] = useState(false);
+    const [signUpSuccess, setSignUpSuccess] = useState(false);
 
     const handleSignUp = async () => {
-        const Response = await fetch(BASE_URL + "/signup", {
+        const response = await fetch(BASE_URL + "/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -31,17 +35,21 @@ export const SignUp = () => {
                 security_question: securityQuestion,
                 security_answer: securityAnswer
             })
-        })
+        });
 
-        if (!Response.ok) {
-            setSignUpFailed(true)
-            return
+        if (!response.ok) {
+            setSignUpFailed(true);
+            setSignUpSuccess(false);
+            return;
         }
 
-        const data = await Response.json()
-        setSignUpFailed(false)
-        return data
-    }
+        setSignUpFailed(false);
+        setSignUpSuccess(true);
+
+        setTimeout(() => {
+            navigate("/user-profile");
+        }, 1200);
+    };
 
     return (
         <div
@@ -66,6 +74,12 @@ export const SignUp = () => {
                                     </div>
                                 ) : null}
 
+                                {signUpSuccess ? (
+                                    <div className="alert alert-success text-center">
+                                        Sign up successful
+                                    </div>
+                                ) : null}
+
                                 <div className="row justify-content-center">
                                     <div className="col-md-10">
                                         <div className="mb-4">
@@ -73,7 +87,7 @@ export const SignUp = () => {
                                                 First Name
                                             </label>
                                             <input
-                                                type="first_name"
+                                                type="text"
                                                 name="first_name"
                                                 className="form-control form-control-lg rounded-4 border-0 shadow"
                                                 placeholder="Enter first name"
@@ -87,7 +101,7 @@ export const SignUp = () => {
                                                 Last Name
                                             </label>
                                             <input
-                                                type="last_name"
+                                                type="text"
                                                 name="last_name"
                                                 className="form-control form-control-lg rounded-4 border-0 shadow"
                                                 placeholder="Enter last name"
@@ -146,7 +160,6 @@ export const SignUp = () => {
                                                 type="date"
                                                 name="dateOfBirth"
                                                 className="form-control form-control-lg rounded-4 border-0 shadow"
-                                                placeholder="Enter date of birth"
                                                 onChange={e => setDateOfBirth(e.target.value)}
                                                 value={dateOfBirth}
                                             />
@@ -212,5 +225,5 @@ export const SignUp = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};

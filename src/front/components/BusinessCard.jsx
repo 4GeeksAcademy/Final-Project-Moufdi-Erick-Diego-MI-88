@@ -37,7 +37,7 @@ export const BusinessCard = ({
                     {isFavorite ? "Remove Favorite" : "Add Favorite"}
                 </button>
 
-                <Link to={`/business/${id}`} className="btn btn-dark ms-1">
+                <Link to={`/offer/${id}`} className="btn btn-dark ms-1">
                     More Info
                 </Link>
             </div>

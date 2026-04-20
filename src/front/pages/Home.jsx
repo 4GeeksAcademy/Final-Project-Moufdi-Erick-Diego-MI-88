@@ -11,27 +11,27 @@ export const Home = () => {
 	const [favoriteIds, setFavoriteIds] = useState([]);
 	const { store, dispatch } = useGlobalReducer()
 
-	const loadBusinesses = async () => {
-		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL
+    const loadBusinesses = async () => {
+        try {
+            const backendUrl = import.meta.env.VITE_BACKEND_URL
 
-			if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
+            if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
 
-			const response = await fetch(backendUrl + "/businesses")
-			const data = await response.json()
+            const response = await fetch(backendUrl + "/businesses")
+            const data = await response.json()
 
-			if (response.ok) dispatch({ type: "set_businesses", payload: data })
+            if (response.ok) dispatch({ type: "set_businesses", payload: data })
 
-			return data
+            return data
 
-		} catch (error) {
-			if (error.message) throw new Error(
-				`Could not fetch businesses from the backend.
-				Please check if the backend is running and the backend port is public.`
-			);
-		}
+        } catch (error) {
+            if (error.message) throw new Error(
+                `Could not fetch businesses from the backend.
+                Please check if the backend is running and the backend port is public.`
+            );
+        }
 
-	}
+    }
 
 const loadUserFavorites = async () => {
 		try {
@@ -87,34 +87,45 @@ const handleToggleFavorite = async (businessId, isFavorite) => {
 		loadUserFavorites();
 	}, [])
 
-	return (
+    return (
 
-		<div className="text-center">
-			<Hero />
+        <div className="text-center">
+            <Hero />
 
-			<div className="container py-5">
-				<div className="row g-4">
-					{store?.businesses.map((business) => (
-						<div className="col-12 col-sm-6 col-lg-4 col-xl-3" key={business.id}>
-							<BusinessCard
-								id={business.id}
-								business_name={business.business_name}
-								type_of_business={business.type_of_business}
-								business_phone_number={business.business_phone_number}
-								business_address={business.business_address}
-								business_description={business.business_description}
-								business_image={business.business_image}
+            <div className="container py-5">
+                <div className="row g-4">
+                    {store?.businesses.map((business) => {
+                        
+                        // moufdi put this to build the full image URL so the cards display the actual uploaded pictures correctly
+                        const fullImageUrl = business.business_image 
+                            ? `${import.meta.env.VITE_BACKEND_URL.replace("/api", "")}/static/uploads/${business.business_image}` 
+                            : null;
+
+                        return (
+                            <div className="col-12 col-sm-6 col-lg-4 col-xl-3" key={business.id}>
+                                <BusinessCard
+								
+                                    // moufdi put this to pass the business ID to the card so the "More Info" link works
+                                    id={business.id}
+                                    business_name={business.business_name}
+                                    type_of_business={business.type_of_business}
+                                    business_phone_number={business.business_phone_number}
+                                    business_address={business.business_address}
+                                    business_description={business.business_description}
+                                    // moufdi put this to pass the full URL instead of just the filename
+                                    business_image={fullImageUrl}
 
 								isFavorite={favoriteIds.includes(business.id)}
               					onToggleFavorite={handleToggleFavorite}
-							/>
-						</div>
-					))}
-				</div>
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
 
-			</div>
-		</div>
+            </div>
+        </div>
 
 
-	);
-}; 
+    );
+};

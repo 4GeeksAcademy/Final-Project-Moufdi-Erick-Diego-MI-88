@@ -1,5 +1,6 @@
 import React from "react";
-import profilePictureBusiness from "../assets/img/business-profile-picture.png"
+import { Link } from "react-router-dom";
+import profilePictureBusiness from "../assets/img/business-profile-picture.png";
 
 export const BusinessCard = ({
     id,
@@ -36,13 +37,9 @@ export const BusinessCard = ({
                     {isFavorite ? "Remove Favorite" : "Add Favorite"}
                 </button>
 
-                <button
-                    href="#"
-                    type="button"
-                    className="btn btn-dark ms-1"
-                >
+                <Link to={`/business/${id}`} className="btn btn-dark ms-1">
                     More Info
-                </button>
+                </Link>
             </div>
         </div>
 

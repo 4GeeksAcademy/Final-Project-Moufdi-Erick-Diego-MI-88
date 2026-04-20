@@ -1,10 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import heroImageUrl from "../assets/img/heroimg.webp";
 
 export const Hero = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   const handleNavigate = (path) => {
     const modalElement = document.getElementById("exampleModal");
@@ -24,6 +24,11 @@ export const Hero = () => {
     navigate(path);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
 
   return (
 
@@ -37,63 +42,85 @@ export const Hero = () => {
             <p className="lead mt-2">
               All your services in your pocket
             </p>
-            <button className="button btn btn-warning btn-lg me-2" 
-            onClick={() => handleNavigate("/login")}
-                    >
-              Log In
-            </button>
 
-            {/* Button trigger modal */}
-            <button type="button" className="button btn btn-warning btn-lg me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              Sign Up
-            </button>
+            {/* Dynamic buttons based on authentication status */}
+            {token ? (
+              <>
+                <button
+                  className="button btn btn-warning btn-lg me-2"
+                  onClick={() => handleNavigate("/user-profile")}
+                >
+                  My Profile
+                </button>
+                <button
+                  className="btn btn-dark btn-lg me-2"
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </button>
+              </>) : (
+              <>
+                <button className="button btn btn-warning btn-lg me-2"
+                  onClick={() => handleNavigate("/login")}
+                >
+                  Log In
+                </button>
 
-            {/* Modal */}
-            <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h1 className="modal-title fs-5" id="exampleModalLabel">Sign Up</h1>
-                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div className="modal-body">
-                    <strong>Would you like to create a personal or a business account?</strong>
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn btn-dark btn-lg me-2"
-                      onClick={() => handleNavigate("/signup")}
-                    >
-                      Personal
-                    </button>
+                {/* Button trigger modal */}
+                <button type="button" className=" btn btn-dark btn-lg me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Sign Up
+                </button>
 
-                    <button
-                      type="button"
-                      className="button btn btn-warning btn-lg me-2"
-                      onClick={() => handleNavigate("/business-signup")}
-                    >
-                      Business
-                    </button>
+                {/* Modal */}
+                <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div className="modal-dialog">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h1 className="modal-title fs-5" id="exampleModalLabel">Sign Up</h1>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div className="modal-body">
+                        <strong>Would you like to create a personal or a business account?</strong>
+                      </div>
+                      <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-dark btn-lg me-2"
+                          onClick={() => handleNavigate("/signup")}
+                        >
+                          Personal
+                        </button>
+
+                        <button
+                          type="button"
+                          className="button btn btn-warning btn-lg me-2"
+                          onClick={() => handleNavigate("/business-signup")}
+                        >
+                          Business
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
+
+
           </div>
 
-          {/* Columna derecha - Imagen */}
+          {/* Right column - Image */}
           <div
-   className="col-md-6 d-none d-md-block"
-  style={{
-    backgroundImage: `
+            className="col-md-6 d-none d-md-block"
+            style={{
+              backgroundImage: `
       linear-gradient(to left, rgba(255,255,255,0) 0%, rgba(248,249,250,1) 100%),
       url(${heroImageUrl})
     `,
-    backgroundSize: "cover",
-    backgroundPosition: "top",
-    minHeight: "600px"
-  }}
-></div>
+              backgroundSize: "cover",
+              backgroundPosition: "top",
+              minHeight: "600px"
+            }}
+          ></div>
 
         </div>
       </div>

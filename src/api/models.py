@@ -6,7 +6,14 @@ from sqlalchemy import Table, Column
 import enum
 
 
+
 db = SQLAlchemy()
+class ContactMessage(db.Model):
+    __tablename__ = "contact_messages"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    message = db.Column(db.Text, nullable=False)
 
 favorite_businesses_table = Table(
     "favorite_businesses",
@@ -25,6 +32,9 @@ class User(db.Model):
     city: Mapped[str] = mapped_column(String(120), nullable=True)
     date_of_birth: Mapped[str] = mapped_column(String(120), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+    security_question: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    security_answer: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
     business_id: Mapped[int | None] = mapped_column(ForeignKey("business.id"), nullable=True)
     
     favorite_businesses: Mapped[list["Business"]] = relationship(
@@ -46,8 +56,8 @@ class User(db.Model):
 
             # do not serialize the password, its a security breach
         }
-    
-   
+
+
 class BusinessType(enum.Enum):
     FOOD = "food"
     RETAIL = "retail"
@@ -69,6 +79,17 @@ class BusinessType(enum.Enum):
 class Business(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     type_of_business: Mapped[str] = mapped_column(String(120), nullable=False)
+    business_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    business_phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
+    business_address: Mapped[str] = mapped_column(String(200), nullable=False)
+    website: Mapped[str] = mapped_column(String(200), nullable=True)
+    services: Mapped[str] = mapped_column(String(300), nullable=True)
+    business_description: Mapped[str] = mapped_column(String(500), nullable=False)
+    business_image: Mapped[str] = mapped_column(String(500), nullable=True)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    security_question: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    security_answer: Mapped[str | None] = mapped_column(String(255), nullable=True)
     business_name: Mapped[str] = mapped_column(String(120))
     business_phone_number: Mapped[str] = mapped_column(String(120))
     business_address: Mapped[str] = mapped_column(String(120))
@@ -87,10 +108,13 @@ class Business(db.Model):
             "business_name": self.business_name,
             "business_phone_number": self.business_phone_number,
             "business_address": self.business_address,
+            "website": self.website,
+            "services": self.services,
             "business_description": self.business_description,
             "business_image": self.business_image
             
         }
+
 
 class Discount(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -108,3 +132,14 @@ class Discount(db.Model):
             "business_id": self.business_id
         }
     
+
+class NewsletterSubscriber(db.Model):
+    __tablename__ = "newsletter_subscribers"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email
+        }

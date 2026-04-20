@@ -7,37 +7,25 @@ export const LearnMore = () => {
 
     const [business, setBusiness] = useState(null);
     const [discounts, setDiscounts] = useState([]);
-    const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    const [reviewRating, setReviewRating] = useState("");
-    const [reviewComment, setReviewComment] = useState("");
-    const [reviewFailed, setReviewFailed] = useState(false);
-    const [reviewSuccess, setReviewSuccess] = useState(false);
-
-    const loggedUserId = localStorage.getItem("user_id");
 
     useEffect(() => {
         const fetchBusinessData = async () => {
             try {
                 setLoading(true);
 
+                // Fetch main business details (Existing Endpoint)
                 const bizResponse = await fetch(`${BASE_URL}/business/${id}`);
                 if (!bizResponse.ok) throw new Error("Business not found.");
                 const bizData = await bizResponse.json();
                 setBusiness(bizData);
 
+                // Fetch discounts (Existing Endpoint)
                 const discResponse = await fetch(`${BASE_URL}/business/${id}/discounts`);
                 if (discResponse.ok) {
                     const discData = await discResponse.json();
                     setDiscounts(discData);
-                }
-
-                const reviewResponse = await fetch(`${BASE_URL}/business/${id}/reviews`);
-                if (reviewResponse.ok) {
-                    const reviewData = await reviewResponse.json();
-                    setReviews(reviewData);
                 }
             } catch (err) {
                 setError(err.message);
@@ -49,36 +37,7 @@ export const LearnMore = () => {
         fetchBusinessData();
     }, [id, BASE_URL]);
 
-    const handleReviewSubmit = async () => {
-        setReviewFailed(false);
-        setReviewSuccess(false);
-
-        const response = await fetch(`${BASE_URL}/business/${id}/reviews`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                user_id: loggedUserId,
-                rating: Number(reviewRating),
-                comment: reviewComment
-            })
-        });
-
-        if (!response.ok) {
-            setReviewFailed(true);
-            setReviewSuccess(false);
-            return;
-        }
-
-        const newReview = await response.json();
-        setReviews([newReview, ...reviews]);
-        setReviewRating("");
-        setReviewComment("");
-        setReviewFailed(false);
-        setReviewSuccess(true);
-    };
-
+    // --- Loading State ---
     if (loading) {
         return (
             <div className="text-center mt-5 pt-5">
@@ -88,6 +47,7 @@ export const LearnMore = () => {
         );
     }
 
+    // --- Error State ---
     if (error) {
         return (
             <div className="container mt-5 text-center">
@@ -97,6 +57,7 @@ export const LearnMore = () => {
         );
     }
 
+    // --- EXACT SAME image logic from BusinessPageProfile ---
     const imageSrc = business.business_image
         ? `${BASE_URL.replace("/api", "")}/static/uploads/${business.business_image}`
         : "https://via.placeholder.com/800x400?text=No+Image+Available";
@@ -105,14 +66,17 @@ export const LearnMore = () => {
         <div className="container-fluid py-5" style={{ backgroundColor: "#f3f3f3", minHeight: "100vh" }}>
             <div className="container">
 
+                {/* Back Link */}
                 <Link to="/" className="text-decoration-none mb-4 d-inline-block" style={{ color: "#8a8442" }}>
                     &larr; Back to Directory
                 </Link>
 
+                {/* Top Card: Image & Details */}
                 <div className="card border-0 shadow-sm mb-4">
                     <div className="card-body p-4">
                         <div className="row">
 
+                            {/* Image Column */}
                             <div className="col-md-5 mb-4 mb-md-0">
                                 <img
                                     src={imageSrc}
@@ -122,6 +86,7 @@ export const LearnMore = () => {
                                 />
                             </div>
 
+                            {/* Details Column */}
                             <div className="col-md-7 d-flex flex-column justify-content-center">
                                 <span className="badge mb-2 align-self-start" style={{ backgroundColor: "#8a8442", width: 'fit-content' }}>
                                     {business.type_of_business ? business.type_of_business.replace(/_/g, " ") : "N/A"}
@@ -155,8 +120,10 @@ export const LearnMore = () => {
                     </div>
                 </div>
 
+                {/* Bottom Row: Map & Offers */}
                 <div className="row g-4">
 
+                    {/* Map Section (Using exact iframe logic from Profile) */}
                     <div className="col-md-6">
                         <div className="card border-0 shadow-sm h-100">
                             <div className="card-body p-4">
@@ -182,6 +149,7 @@ export const LearnMore = () => {
                         </div>
                     </div>
 
+                    {/* Active Offers Section */}
                     <div className="col-md-6">
                         <div className="card border-0 shadow-sm h-100">
                             <div className="card-body p-4 d-flex flex-column">
@@ -208,75 +176,6 @@ export const LearnMore = () => {
                     </div>
 
                 </div>
-
-                <div className="card border-0 shadow-sm mt-4">
-                    <div className="card-body p-4">
-                        <h4 className="fw-bold mb-3">Reviews</h4>
-
-                        {loggedUserId ? (
-                            <div className="border rounded p-3 bg-light mb-4">
-                                <h5 className="fw-bold mb-3">Leave a Review</h5>
-
-                                {reviewFailed ? (
-                                    <div className="alert alert-danger">Review failed</div>
-                                ) : null}
-
-                                {reviewSuccess ? (
-                                    <div className="alert alert-success">Review submitted</div>
-                                ) : null}
-
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Rating</label>
-                                    <select
-                                        className="form-control"
-                                        value={reviewRating}
-                                        onChange={(e) => setReviewRating(e.target.value)}
-                                    >
-                                        <option value="">Select rating</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                    </select>
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Review</label>
-                                    <textarea
-                                        className="form-control"
-                                        rows="3"
-                                        value={reviewComment}
-                                        onChange={(e) => setReviewComment(e.target.value)}
-                                    />
-                                </div>
-
-                                <button
-                                    className="btn fw-bold text-white"
-                                    style={{ backgroundColor: "#8a8442", border: "none" }}
-                                    onClick={handleReviewSubmit}
-                                >
-                                    Submit Review
-                                </button>
-                            </div>
-                        ) : null}
-
-                        <div>
-                            {reviews.length > 0 ? (
-                                reviews.map((review) => (
-                                    <div key={review.id} className="border rounded bg-light p-3 mb-3">
-                                        <h6 className="fw-bold mb-1">{review.user_name}</h6>
-                                        <div className="mb-2">Rating: {review.rating}/5</div>
-                                        <p className="mb-0">{review.comment}</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-muted">No reviews yet.</div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     );

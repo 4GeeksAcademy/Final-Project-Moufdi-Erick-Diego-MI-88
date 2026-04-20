@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from .models import db, User, Business, Discount, ContactMessage, Review
+from .models import db, User, Business, Discount, ContactMessage
 from .utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select
@@ -294,41 +294,3 @@ def get_user_profile():
 def get_all_businesses():
     all_businesses = Business.query.all()
     return jsonify([business.serialize() for business in all_businesses]), 200
-
-@api.route("/business/<int:business_id>/reviews", methods=["GET"])
-def get_business_reviews(business_id):
-    reviews = Review.query.filter_by(business_id=business_id).order_by(Review.id.desc()).all()
-    return jsonify([review.serialize() for review in reviews]), 200
-
-
-@api.route("/business/<int:business_id>/reviews", methods=["POST"])
-def create_review(business_id):
-    body = request.get_json()
-
-    user_id = body.get("user_id")
-    rating = body.get("rating")
-    comment = body.get("comment")
-
-    if not user_id or not rating or not comment:
-        return jsonify({"msg": "Missing required fields"}), 400
-
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"msg": "User not found"}), 404
-
-    business = Business.query.get(business_id)
-    if not business:
-        return jsonify({"msg": "Business not found"}), 404
-
-    new_review = Review(
-        rating=rating,
-        comment=comment,
-        user_name=f"{user.first_name} {user.last_name}",
-        user_id=user.id,
-        business_id=business.id
-    )
-
-    db.session.add(new_review)
-    db.session.commit()
-
-    return jsonify(new_review.serialize()), 201

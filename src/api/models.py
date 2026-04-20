@@ -4,6 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 import enum
 
 
+
 db = SQLAlchemy()
 class ContactMessage(db.Model):
     __tablename__ = "contact_messages"
@@ -99,24 +100,5 @@ class Discount(db.Model):
             "discount_title": self.discount_title,
             "description": self.description,
             "percentage_rate": self.percentage_rate,
-            "business_id": self.business_id
-        }
-
-
-class Review(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    rating: Mapped[int] = mapped_column(nullable=False)
-    comment: Mapped[str] = mapped_column(String(1000), nullable=False)
-    user_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
-    business_id: Mapped[int] = mapped_column(ForeignKey("business.id"), nullable=False)
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "rating": self.rating,
-            "comment": self.comment,
-            "user_name": self.user_name,
-            "user_id": self.user_id,
             "business_id": self.business_id
         }

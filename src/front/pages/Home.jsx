@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Hero } from "../components/Hero.jsx";
 import { BusinessCard } from "../components/BusinessCard.jsx";
@@ -6,7 +6,10 @@ import { BusinessCard } from "../components/BusinessCard.jsx";
 
 export const Home = () => {
 
-    const { store, dispatch } = useGlobalReducer()
+	const BASE_URL = import.meta.env.VITE_BACKEND_URL
+	const [businesses, setBusinesses] = useState([]);
+	const [favoriteIds, setFavoriteIds] = useState([]);
+	const { store, dispatch } = useGlobalReducer()
 
     const loadBusinesses = async () => {
         try {
@@ -30,11 +33,59 @@ export const Home = () => {
 
     }
 
+const loadUserFavorites = async () => {
+		try {
+			const token = localStorage.getItem("token");
+			if (!token) return;
 
+			const response = await fetch(`${BASE_URL}/user`, {
+				headers: {
+					Authorization: "Bearer " + token
+				}
+			});
 
-    useEffect(() => {
-        loadBusinesses();
-    }, [])
+			const data = await response.json();
+
+			const ids = (data.favorite_businesses || []).map(b => b.id);
+			setFavoriteIds(ids);
+
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+const handleToggleFavorite = async (businessId, isFavorite) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Login first");
+      return;
+    }
+
+    const method = isFavorite ? "DELETE" : "POST";
+
+    const response = await fetch(`${BASE_URL}/favorite/business/${businessId}`, {
+      method,
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+	if (!response.ok) return;
+    const data = await response.json();
+
+    const updatedIds = (data.favorite_businesses || []).map(b => b.id);
+    setFavoriteIds(updatedIds);
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+	useEffect(() => {
+		loadBusinesses();
+		loadUserFavorites();
+	}, [])
 
     return (
 
@@ -53,6 +104,7 @@ export const Home = () => {
                         return (
                             <div className="col-12 col-sm-6 col-lg-4 col-xl-3" key={business.id}>
                                 <BusinessCard
+								
                                     // moufdi put this to pass the business ID to the card so the "More Info" link works
                                     id={business.id}
                                     business_name={business.business_name}
@@ -62,6 +114,9 @@ export const Home = () => {
                                     business_description={business.business_description}
                                     // moufdi put this to pass the full URL instead of just the filename
                                     business_image={fullImageUrl}
+
+								isFavorite={favoriteIds.includes(business.id)}
+              					onToggleFavorite={handleToggleFavorite}
                                 />
                             </div>
                         );

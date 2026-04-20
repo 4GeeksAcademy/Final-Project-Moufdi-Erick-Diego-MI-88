@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from .models import db, User, Business, Discount, ContactMessage, Review
+from .models import db, User, Business, Discount, ContactMessage, NewsletterSubscriber, Review
 from .utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select
@@ -295,6 +295,95 @@ def get_all_businesses():
     all_businesses = Business.query.all()
     return jsonify([business.serialize() for business in all_businesses]), 200
 
+
+@api.route("/favorite/business/<int:business_id>", methods=["POST"])
+@jwt_required()
+def add_favorite_business(business_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    business = Business.query.get(business_id)
+
+    if user is None or business is None:
+        return jsonify({"msg": "User or business not found"}), 404
+
+    if business not in user.favorite_businesses:
+        user.favorite_businesses.append(business)
+        db.session.commit()
+
+    return jsonify({"favorite_businesses": [b.serialize() for b in user.favorite_businesses]}), 200
+
+@api.route("/favorite/business/<int:business_id>", methods=["DELETE"])
+@jwt_required()
+def remove_favorite_business(business_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    business = Business.query.get(business_id)
+
+    if user is None or business is None:
+        return jsonify({"msg": "User or business not found"}), 404
+
+    if business in user.favorite_businesses:
+        user.favorite_businesses.remove(business)
+        db.session.commit()
+
+    return jsonify({"favorite_businesses": [b.serialize() for b in user.favorite_businesses]}), 200
+ 
+
+@api.route("/user/<int:user_id>", methods=["PUT"])
+@jwt_required()
+def update_user_profile(user_id):
+    current_user_id = int(get_jwt_identity())
+    if current_user_id != user_id:
+        return jsonify({"msg": "Unauthorized"}), 403
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+    body = request.get_json()
+    user.first_name = body.get("first_name", user.first_name)
+    user.last_name = body.get("last_name", user.last_name)
+    user.phone = body.get("phone", user.phone)
+    user.city = body.get("city", user.city)
+    user.date_of_birth = body.get("date_of_birth", user.date_of_birth)
+    db.session.commit()
+    return jsonify(user.serialize()), 200
+
+@api.route("/user/<int:user_id>/password", methods=["PUT"])
+@jwt_required()
+def change_user_password(user_id):
+    current_user_id = int(get_jwt_identity())
+    if current_user_id != user_id:
+        return jsonify({"msg": "Unauthorized"}), 403
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    body = request.get_json()
+    new_password = body.get("new_password")
+
+    if not new_password :
+        return jsonify({"msg": "Password is required"}), 400
+
+    user.password = new_password
+    db.session.commit()
+    return jsonify({"msg": "Password updated successfully"}), 200
+
+@api.route("/newsletter", methods=["POST"])
+def subscribe_newsletter():
+    body = request.get_json()
+    email = body.get("email")
+
+    if not email:
+        return jsonify({"msg": "Email is required"}), 400
+
+    existing = NewsletterSubscriber.query.filter_by(email=email).first()
+    if existing:
+        return jsonify({"msg": "Email already subscribed"}), 400
+
+    new_sub = NewsletterSubscriber(email=email)
+    db.session.add(new_sub)
+    db.session.commit()
+    return jsonify({"msg": "Subscribed successfully"}), 201
 @api.route("/business/<int:business_id>/reviews", methods=["GET"])
 def get_business_reviews(business_id):
     reviews = Review.query.filter_by(business_id=business_id).order_by(Review.id.desc()).all()

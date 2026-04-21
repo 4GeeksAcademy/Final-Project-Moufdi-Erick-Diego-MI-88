@@ -312,6 +312,7 @@ def add_favorite_business(business_id):
 
     return jsonify({"favorite_businesses": [b.serialize() for b in user.favorite_businesses]}), 200
 
+
 @api.route("/favorite/business/<int:business_id>", methods=["DELETE"])
 @jwt_required()
 def remove_favorite_business(business_id):
@@ -327,7 +328,7 @@ def remove_favorite_business(business_id):
         db.session.commit()
 
     return jsonify({"favorite_businesses": [b.serialize() for b in user.favorite_businesses]}), 200
- 
+
 
 @api.route("/user/<int:user_id>", methods=["PUT"])
 @jwt_required()
@@ -347,6 +348,7 @@ def update_user_profile(user_id):
     db.session.commit()
     return jsonify(user.serialize()), 200
 
+
 @api.route("/user/<int:user_id>/password", methods=["PUT"])
 @jwt_required()
 def change_user_password(user_id):
@@ -361,12 +363,13 @@ def change_user_password(user_id):
     body = request.get_json()
     new_password = body.get("new_password")
 
-    if not new_password :
+    if not new_password:
         return jsonify({"msg": "Password is required"}), 400
 
     user.password = new_password
     db.session.commit()
     return jsonify({"msg": "Password updated successfully"}), 200
+
 
 @api.route("/newsletter", methods=["POST"])
 def subscribe_newsletter():
@@ -384,6 +387,8 @@ def subscribe_newsletter():
     db.session.add(new_sub)
     db.session.commit()
     return jsonify({"msg": "Subscribed successfully"}), 201
+
+
 @api.route("/business/<int:business_id>/reviews", methods=["GET"])
 def get_business_reviews(business_id):
     reviews = Review.query.filter_by(business_id=business_id).order_by(Review.id.desc()).all()

@@ -61,68 +61,117 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <div className="container signUpandLoginPages">
-      <h1>Reset Password</h1>
+    <div
+      className="container-fluid d-flex align-items-center justify-content-center py-5"
+      style={{ backgroundColor: "#f3f3f3", minHeight: "100vh" }}
+    >
+      <div className="col-lg-7 col-xl-6">
+        <div className="card border-0 shadow-lg rounded-5 overflow-hidden">
+          <div
+            className="card-body p-4 p-md-5"
+            style={{ backgroundColor: "#8a8442", color: "white" }}
+          >
+            <h2 className="text-center fw-bold mb-4 display-6">
+              Reset Password
+            </h2>
 
-      {questionFailed ? <h2 className="text-danger">Email not found</h2> : null}
-      {resetDone ? <h2 className="text-success">Password updated</h2> : null}
-      {resetFailed ? <h2 className="text-danger">Reset failed</h2> : null}
+            {resetDone ? (
+              <div className="alert alert-success text-center mb-0">
+                Password updated successfully
+              </div>
+            ) : (
+              <>
+                {questionFailed ? (
+                  <div className="alert alert-danger text-center">
+                    Email not found
+                  </div>
+                ) : null}
 
-      <div className="row">
-        <div className="col-3"></div>
-        <div className="col-6">
-          <div>
-            <label htmlFor="email">Email</label>
-            <input
-              type="text"
-              name="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
+                {resetFailed ? (
+                  <div className="alert alert-danger text-center">
+                    Reset failed
+                  </div>
+                ) : null}
+
+                <div className="mb-4">
+                  <label className="form-label text-white fw-bold fs-5">
+                    Email
+                  </label>
+                  <input
+                    type="text"
+                    name="email"
+                    className="form-control form-control-lg rounded-4 border-0 shadow"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                  />
+                </div>
+
+                {!questionLoaded ? (
+                  <div className="text-center mt-4">
+                    <button
+                      className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-pill shadow"
+                      onClick={handleGetQuestion}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-4">
+                      <label className="form-label text-white fw-bold fs-5">
+                        Security Question
+                      </label>
+                      <input
+                        type="text"
+                        value={securityQuestion}
+                        disabled
+                        className="form-control form-control-lg rounded-4 border-0 shadow"
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="form-label text-white fw-bold fs-5">
+                        Answer
+                      </label>
+                      <input
+                        type="text"
+                        name="securityAnswer"
+                        className="form-control form-control-lg rounded-4 border-0 shadow"
+                        placeholder="Enter your answer"
+                        value={securityAnswer}
+                        onChange={e => setSecurityAnswer(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="form-label text-white fw-bold fs-5">
+                        New Password
+                      </label>
+                      <input
+                        type="password"
+                        name="newPassword"
+                        className="form-control form-control-lg rounded-4 border-0 shadow"
+                        placeholder="Enter your new password"
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="text-center mt-4">
+                      <button
+                        className="btn btn-light btn-lg fw-bold px-5 py-3 rounded-pill shadow"
+                        onClick={handleResetPassword}
+                      >
+                        Reset Password
+                      </button>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
           </div>
-
-          {!questionLoaded ? (
-            <button className="btn btn-success mt-3" onClick={handleGetQuestion}>
-              Continue
-            </button>
-          ) : (
-            <>
-              <div className="mt-3">
-                <label>Security Question</label>
-                <input
-                  type="text"
-                  value={securityQuestion}
-                  disabled
-                />
-              </div>
-
-              <div>
-                <label htmlFor="securityAnswer">Answer</label>
-                <input
-                  type="text"
-                  name="securityAnswer"
-                  value={securityAnswer}
-                  onChange={e => setSecurityAnswer(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="newPassword">New Password</label>
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
-                />
-              </div>
-
-              <button className="btn btn-success mt-3" onClick={handleResetPassword}>
-                Reset Password
-              </button>
-            </>
-          )}
         </div>
-        <div className="col-3"></div>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, Boolean, Enum, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, foreign, relationship
+from sqlalchemy import Table, Column
+
 import enum
 
 
@@ -11,6 +13,13 @@ class ContactMessage(db.Model):
     name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     message = db.Column(db.Text, nullable=False)
+
+favorite_businesses_table = Table(
+    "favorite_businesses",
+    db.metadata,
+    Column("user_id", ForeignKey("user.id"), primary_key=True),
+    Column("business_id", ForeignKey("business.id"), primary_key=True)
+)
 
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -26,6 +35,12 @@ class User(db.Model):
     security_answer: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     business_id: Mapped[int | None] = mapped_column(ForeignKey("business.id"), nullable=True)
+    
+    favorite_businesses: Mapped[list["Business"]] = relationship(
+        secondary=favorite_businesses_table,
+        back_populates="favorited_by"
+    )
+
 
     def serialize(self):
         return {
@@ -36,6 +51,9 @@ class User(db.Model):
             "phone": self.phone,
             "city": self.city,
             "date_of_birth": self.date_of_birth,
+            "favorite_businesses": [business.serialize() for business in self.favorite_businesses]
+
+            # do not serialize the password, its a security breach
         }
 
 
@@ -71,6 +89,16 @@ class Business(db.Model):
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     security_question: Mapped[str | None] = mapped_column(String(255), nullable=True)
     security_answer: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    business_name: Mapped[str] = mapped_column(String(120))
+    business_phone_number: Mapped[str] = mapped_column(String(120))
+    business_address: Mapped[str] = mapped_column(String(120))
+    business_description: Mapped[str] = mapped_column(String(255))
+    business_image: Mapped[str] = mapped_column(String(255), nullable=True)
+    discounts: Mapped[list["Discount"]] = relationship(backref="business", cascade="all, delete-orphan")
+    favorited_by: Mapped[list["User"]] = relationship(
+        secondary=favorite_businesses_table,
+        back_populates="favorite_businesses"
+    )   
 
     def serialize(self):
         return {
@@ -83,6 +111,7 @@ class Business(db.Model):
             "services": self.services,
             "business_description": self.business_description,
             "business_image": self.business_image
+            
         }
 
 
@@ -100,6 +129,18 @@ class Discount(db.Model):
             "description": self.description,
             "percentage_rate": self.percentage_rate,
             "business_id": self.business_id
+        }
+    
+
+class NewsletterSubscriber(db.Model):
+    __tablename__ = "newsletter_subscribers"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email
         }
 
 

@@ -13,6 +13,7 @@ import { ForgotPassword } from "./pages/ForgotPasswordPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
 import { BusinessSignUp } from "./pages/BusinessSignUpPage";
 import { BusinessPageProfile } from "./pages/BusinessPageProfile";
+import { CategoryPage } from "./pages/CategoryPage";
 import { DiscountPage } from "./components/DiscountPage";
 import AboutUs from "./pages/AboutUsPage";
 import ContactUs from "./pages/contact-us";
@@ -48,6 +49,7 @@ export const router = createBrowserRouter(
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/admin/messages" element={<AdminMessages />} />
         <Route path="/offer/:id" element={<LearnMore />} />
+        <Route path="/category/:category" element={<CategoryPage />} />
       </Route>
     )
 );

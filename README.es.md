@@ -91,13 +91,12 @@ flask run
 - ✅ Frontend (React) comunicándose con backend (Flask) mediante APIs REST
 - ✅ Modelos de base de datos para usuarios, negocios y sus relaciones
 - ✅ Pruebas de flujos completos de usuario y negocio de extremo a extremo
-- 🔄 Funcionalidad de reseñas *(en progreso)*
+- ✅ Funcionalidad de reseñas
 
 ---
 
 ## 🔮 Mejoras Futuras
 
-- ⭐ Sistema de reseñas
 - ❤️ Favoritos
 - 🔍 Búsqueda avanzada y filtros
 - 📊 Panel de analíticas para negocios

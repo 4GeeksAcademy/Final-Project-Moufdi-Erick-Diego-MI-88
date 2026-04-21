@@ -14,7 +14,7 @@ export const LogIn = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
-                
+
             },
             body: JSON.stringify({
                 email: email,
@@ -41,38 +41,64 @@ export const LogIn = () => {
 
     return (
         <>
-            <div className="container signUpandLoginPages">
-                <h1>LogIn page!</h1>
-                {logInFailed ? <h2 className="text-danger">logIn Failed</h2> : null}
-                <div className="row">
-                    <div className="col-3"></div>
-                    <div className="col-6">
-                        <div>
-                            <label htmlFor="email">Email</label>
+            <div
+                className="container-fluid d-flex align-items-center justify-content-center"
+                style={{ minHeight: "100vh", backgroundColor: "#f3f3f3" }}
+            >
+                <div className="col-md-6 col-lg-5">
+                    <div
+                        className="card shadow-lg border-0 rounded-5 p-4"
+                        style={{ backgroundColor: "#8a8442", color: "white" }}
+                    >
+                        <h2 className="text-center mb-4 fw-bold">Log In</h2>
+
+                        {logInFailed ? (
+                            <div className="alert alert-danger text-center">
+                                Login Failed
+                            </div>
+                        ) : null}
+
+                        <div className="mb-3">
+                            <label className="form-label fw-bold">Email</label>
                             <input
                                 type="text"
                                 name="email"
+                                className="form-control form-control-lg rounded-4 border-0 shadow"
+                                placeholder="Enter your email"
                                 onChange={e => setEmail(e.target.value)}
                                 value={email}
                             />
                         </div>
-                        <div>
-                            <label htmlFor="password">password</label>
+
+                        <div className="mb-4">
+                            <label className="form-label fw-bold">Password</label>
                             <input
                                 type="password"
                                 name="password"
+                                className="form-control form-control-lg rounded-4 border-0 shadow"
+                                placeholder="Enter your password"
                                 onChange={e => setPassword(e.target.value)}
                                 value={password}
                             />
                         </div>
+
+                        <div className="d-grid">
+                            <button
+                                className="btn btn-light fw-bold py-2 rounded-pill shadow"
+                                onClick={handleLogin}
+                            >
+                                Log In
+                            </button>
+                        </div>
+
+                        <p className="text-center mt-4 mb-0">
+                            <a href="/forgot-password" style={{ color: "white", textDecoration: "underline" }}>
+                                Forgot password?
+                            </a>
+                        </p>
                     </div>
-                    <div className="col-3"></div>
                 </div>
-                <button className="btn btn-success" onClick={handleLogin}>Log In</button>
-                <p className="mt-3">
-                    <a href="/forgot-password">Forgot password?</a>
-                </p>
             </div>
         </>
-    )
+    );
 }

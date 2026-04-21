@@ -91,13 +91,12 @@ flask run
 - ✅ Frontend (React) communicating with backend (Flask) through REST APIs
 - ✅ Database models for users, businesses, and relationships
 - ✅ End-to-end testing of full user and business flows
-- 🔄 Reviews feature *(in progress)*
+- ✅ Reviews feature
 
 ---
 
 ## 🔮 Future Improvements
 
-- ⭐ Reviews system
 - ❤️ Favorites
 - 🔍 Advanced search & filters
 - 📊 Business analytics dashboard
@@ -117,7 +116,7 @@ flask run
 
 ## 📋 Project Status
 
-> **Core functionality is complete.** The platform fully supports business onboarding and user discovery workflows.
+> **Core functionality is complete.** The platform fully supports business onboarding, user discovery workflows, and reviews.
 
 ---
 

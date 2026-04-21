@@ -19,36 +19,74 @@ export const SignUp = () => {
     const [signUpSuccess, setSignUpSuccess] = useState(false);
 
     const handleSignUp = async () => {
-        const response = await fetch(BASE_URL + "/signup", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                first_name: firstName,
-                last_name: lastName,
-                email: email,
-                password: password,
-                phone: phone,
-                city: city,
-                date_of_birth: dateOfBirth,
-                security_question: securityQuestion,
-                security_answer: securityAnswer
-            })
-        });
+        try {
+            const response = await fetch(BASE_URL + "/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email,
+                    password: password,
+                    phone: phone,
+                    city: city,
+                    date_of_birth: dateOfBirth,
+                    security_question: securityQuestion,
+                    security_answer: securityAnswer
+                })
+            });
 
-        if (!response.ok) {
+            const signUpData = await response.json();
+
+            if (!response.ok) {
+                console.log("SIGNUP ERROR:", signUpData);
+                setSignUpFailed(true);
+                setSignUpSuccess(false);
+                return;
+            }
+
+            const loginResponse = await fetch(BASE_URL + "/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            const loginData = await loginResponse.json();
+
+            if (!loginResponse.ok) {
+                console.log("LOGIN ERROR:", loginData);
+                setSignUpFailed(true);
+                setSignUpSuccess(false);
+                return;
+            }
+
+            localStorage.setItem("token", loginData.token);
+            localStorage.setItem("user_id", loginData.user_id);
+
+            if (loginData.business_id) {
+                localStorage.setItem("business_id", loginData.business_id);
+            } else {
+                localStorage.removeItem("business_id");
+            }
+
+            setSignUpFailed(false);
+            setSignUpSuccess(true);
+
+            setTimeout(() => {
+                navigate("/user-profile");
+            }, 1200);
+        } catch (error) {
+            console.error("SIGNUP CRASH:", error);
             setSignUpFailed(true);
             setSignUpSuccess(false);
-            return;
         }
-
-        setSignUpFailed(false);
-        setSignUpSuccess(true);
-
-        setTimeout(() => {
-            navigate("/user-profile");
-        }, 1200);
     };
 
     return (

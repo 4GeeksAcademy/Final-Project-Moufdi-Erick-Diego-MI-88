@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export const DiscountPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
     const [discounts, setDiscounts] = useState([]);
@@ -94,6 +95,15 @@ export const DiscountPage = () => {
 
     return (
         <div className="container mt-4">
+
+            {/* ✅ Back button */}
+            <button
+                className="btn btn-outline-secondary mb-3"
+                onClick={() => navigate(`/business/${id}`)}
+            >
+                ← Back to Business Profile
+            </button>
+
             <h1 className="mb-4">Manage Offers</h1>
 
             <form onSubmit={handleSubmit} className="mb-4">

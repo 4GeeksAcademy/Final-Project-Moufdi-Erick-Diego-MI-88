@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 export const UserProfilePage = () => {
 
     const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-    const [activeTab, setActiveTab] = useState("personal");  //change between personal info, favorites and settings
-    const [user, setUser] = useState(null); // Store user data
-    const [favorites, setFavorites] = useState([]); // Store user's favorite businesses
-    const [loading, setLoading] = useState(true); // Loading state for user data
+    const [activeTab, setActiveTab] = useState("personal");
+    const [user, setUser] = useState(null);
+    const [favorites, setFavorites] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     //Edit Profile
@@ -31,8 +31,7 @@ export const UserProfilePage = () => {
     //Delete modal
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-
-    // Generate initials for avatar 
+    // Generate initials for avatar
     const initials = user
         ? `${user.first_name?.[0] || ""}${user.last_name?.[0] || ""}`.toUpperCase()
         : "";
@@ -123,10 +122,10 @@ export const UserProfilePage = () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     email: user.email,
                     new_password: newPassword
-                 })
+                })
             });
 
             if (!response.ok) {
@@ -158,7 +157,6 @@ export const UserProfilePage = () => {
             console.error("Error deleting account:", error);
         }
     };
-
 
     // Handle logout
     const handleLogout = () => {
@@ -300,9 +298,9 @@ export const UserProfilePage = () => {
                                                 <button className="btn btn-success mt-4" onClick={handleSaveProfile}>
                                                     Save changes
                                                 </button>
-                                                <button className=" btn btn-outline-secondary mt-4" onClick={() => setIsEditing(false)}>
+                                                <button className="btn btn-outline-secondary mt-4" onClick={() => setIsEditing(false)}>
                                                     Cancel
-                                                </button> 
+                                                </button>
                                             </>
                                         )}
                                         <button className="ms-2 btn btn-danger mt-4" onClick={handleLogout}>
@@ -328,7 +326,12 @@ export const UserProfilePage = () => {
                                                         business_phone_number={biz.business_phone_number}
                                                         business_address={biz.business_address}
                                                         business_description={biz.business_description}
-                                                        business_image={biz.business_image}
+                                                        // ✅ Build the full image URL instead of passing just the filename
+                                                        business_image={
+                                                            biz.business_image
+                                                                ? `${BASE_URL.replace("/api", "")}/static/uploads/${biz.business_image}`
+                                                                : null
+                                                        }
                                                         isFavorite={true}
                                                         onToggleFavorite={() => { }}
                                                     />
@@ -351,11 +354,9 @@ export const UserProfilePage = () => {
                                                 <input className="form-check-input" type="checkbox" defaultChecked />
                                             </div>
                                         </div>
-
                                     </div>
 
                                     {/* Change password section */}
-
                                     <p className="text-muted small fw-bold mb-2">Change Password</p>
                                     <div className="card border-0 bg-light p-3 mb-4">
                                         <div className="d-flex justify-content-between align-items-center">
@@ -383,10 +384,9 @@ export const UserProfilePage = () => {
                                                 {passwordMsg}
                                             </p>
                                         )}
-
                                         <button className="button btn btn-sm mt-2" onClick={handleChangePassword}>Change</button>
-
                                     </div>
+
                                     {/* Delete Account */}
                                     <p className="text-muted small fw-bold mb-2">Danger Zone</p>
                                     <div className="card border-danger p-3">

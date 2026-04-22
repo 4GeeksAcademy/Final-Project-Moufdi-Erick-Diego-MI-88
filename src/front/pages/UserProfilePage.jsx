@@ -64,8 +64,6 @@ export const UserProfilePage = () => {
                 }
 
                 const data = await response.json();
-                console.log("USER DATA:", data);
-
                 setUser(data);
                 setFavorites(data.favorite_businesses || []);
             } catch (error) {
@@ -155,6 +153,29 @@ export const UserProfilePage = () => {
             navigate("/");
         } catch (error) {
             console.error("Error deleting account:", error);
+        }
+    };
+
+    // ✅ Remove favorite — calls DELETE /favorite/business/<business_id>
+    const handleRemoveFavorite = async (businessId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${BASE_URL}/favorite/business/${businessId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                alert("Failed to remove favorite. Please try again.");
+                return;
+            }
+
+            // Remove it from local state so UI updates instantly
+            setFavorites(prev => prev.filter(biz => biz.id !== businessId));
+        } catch (error) {
+            console.error("Error removing favorite:", error);
         }
     };
 
@@ -326,14 +347,14 @@ export const UserProfilePage = () => {
                                                         business_phone_number={biz.business_phone_number}
                                                         business_address={biz.business_address}
                                                         business_description={biz.business_description}
-                                                        // ✅ Build the full image URL instead of passing just the filename
                                                         business_image={
                                                             biz.business_image
                                                                 ? `${BASE_URL.replace("/api", "")}/static/uploads/${biz.business_image}`
                                                                 : null
                                                         }
                                                         isFavorite={true}
-                                                        onToggleFavorite={() => { }}
+                                                        // ✅ Now wired to actually remove the favorite
+                                                        onToggleFavorite={() => handleRemoveFavorite(biz.id)}
                                                     />
                                                 </div>
                                             ))}
@@ -380,7 +401,7 @@ export const UserProfilePage = () => {
                                             />
                                         </div>
                                         {passwordMsg && (
-                                            <p className={`small mb-2 ${passwordMsg.includes("Successfully") ? "text-success" : "text-danger"}`}>
+                                            <p className={`small mb-2 ${passwordMsg.includes("successfully") ? "text-success" : "text-danger"}`}>
                                                 {passwordMsg}
                                             </p>
                                         )}

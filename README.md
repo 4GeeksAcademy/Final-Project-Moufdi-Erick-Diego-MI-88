@@ -43,8 +43,8 @@ This platform provides a centralized system where businesses can present their s
 
 | Layer | Technologies |
 |---|---|
-| **Frontend** | React, Vite, React Router, Bootstrap |
-| **Backend** | Flask, SQLAlchemy, Flask-CORS, JWT |
+| **Frontend** | React, Vite, React Router, Bootstrap, HTML, JavaScript |
+| **Backend** | Flask, SQLAlchemy, Flask-CORS, JWT, Python |
 | **Database** | PostgreSQL / SQLite |
 | **External APIs** | Google Maps API |
 

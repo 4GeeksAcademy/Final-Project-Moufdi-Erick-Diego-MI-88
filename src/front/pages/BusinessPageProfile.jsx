@@ -8,6 +8,7 @@ export const BusinessPageProfile = () => {
 
   const [business, setBusiness] = useState(null);
   const [discounts, setDiscounts] = useState([]);
+  const [reviews, setReviews] = useState([]); // ✅ Added reviews state
   const [isEditing, setIsEditing] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -50,6 +51,19 @@ export const BusinessPageProfile = () => {
     fetchDiscounts();
   }, [id, BASE_URL]);
 
+  // ✅ Added reviews fetch
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const response = await fetch(BASE_URL + "/business/" + id + "/reviews");
+      if (!response.ok) return;
+
+      const data = await response.json();
+      setReviews(data);
+    };
+
+    fetchReviews();
+  }, [id, BASE_URL]);
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -58,46 +72,46 @@ export const BusinessPageProfile = () => {
   };
 
   const handleSave = async () => {
-  const response = await fetch(BASE_URL + "/business/" + id, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(form)
-  });
+    const response = await fetch(BASE_URL + "/business/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(form)
+    });
 
-  if (!response.ok) return;
+    if (!response.ok) return;
 
-  let updatedBusiness = await response.json();
+    let updatedBusiness = await response.json();
 
-  if (selectedImage) {
-    const imageData = new FormData();
-    imageData.append("image", selectedImage);
+    if (selectedImage) {
+      const imageData = new FormData();
+      imageData.append("image", selectedImage);
 
-    const imageResponse = await fetch(
-      BASE_URL + "/business/" + id + "/upload-image",
-      {
-        method: "POST",
-        body: imageData
+      const imageResponse = await fetch(
+        BASE_URL + "/business/" + id + "/upload-image",
+        {
+          method: "POST",
+          body: imageData
+        }
+      );
+
+      if (imageResponse.ok) {
+        updatedBusiness = await imageResponse.json();
       }
-    );
-
-    if (imageResponse.ok) {
-      updatedBusiness = await imageResponse.json();
     }
-  }
 
-  setBusiness(updatedBusiness);
-  setForm({
-    business_name: updatedBusiness.business_name || "",
-    business_address: updatedBusiness.business_address || "",
-    business_phone_number: updatedBusiness.business_phone_number || "",
-    business_description: updatedBusiness.business_description || "",
-    type_of_business: updatedBusiness.type_of_business || ""
-  });
-  setSelectedImage(null);
-  setIsEditing(false);
-};
+    setBusiness(updatedBusiness);
+    setForm({
+      business_name: updatedBusiness.business_name || "",
+      business_address: updatedBusiness.business_address || "",
+      business_phone_number: updatedBusiness.business_phone_number || "",
+      business_description: updatedBusiness.business_description || "",
+      type_of_business: updatedBusiness.type_of_business || ""
+    });
+    setSelectedImage(null);
+    setIsEditing(false);
+  };
 
   const handleImageUpload = async () => {
     if (!selectedImage) return;
@@ -146,7 +160,7 @@ export const BusinessPageProfile = () => {
     });
 
     if (!response.ok) {
-      alert("We couldn’t delete the business profile. Please try again.");
+      alert("We couldn't delete the business profile. Please try again.");
       return;
     }
 
@@ -395,17 +409,24 @@ export const BusinessPageProfile = () => {
               </div>
             </div>
 
+            {/* ✅ Reviews section — now fetches and displays real data */}
             <div className="mt-4">
-              <div className="border rounded p-4 text-center">
+              <div className="border rounded p-4">
                 <h4 className="fw-bold mb-3">Reviews</h4>
-                <div
-                  className="d-flex align-items-center justify-content-center rounded"
-                  style={{ height: "150px", backgroundColor: "#e9ecef" }}
-                >
-                  Reviews Section
-                </div>
+                {reviews.length > 0 ? (
+                  reviews.map((review) => (
+                    <div key={review.id} className="border rounded bg-light p-3 mb-3">
+                      <h6 className="fw-bold mb-1">{review.user_name}</h6>
+                      <div className="mb-2 text-muted">Rating: {review.rating}/5</div>
+                      <p className="mb-0">{review.comment}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-muted">No reviews yet.</div>
+                )}
               </div>
             </div>
+
           </div>
         </div>
       </div>

@@ -173,6 +173,20 @@ def update_business(business_id):
     return jsonify(business.serialize()), 200
 
 
+# ✅ NEW — Delete business profile
+@api.route("/business/<int:business_id>", methods=["DELETE"])
+def delete_business(business_id):
+    business = Business.query.get(business_id)
+
+    if not business:
+        return jsonify({"msg": "Business not found"}), 404
+
+    db.session.delete(business)
+    db.session.commit()
+
+    return jsonify({"msg": "Business deleted"}), 200
+
+
 @api.route("/business/<int:business_id>/upload-image", methods=["POST"])
 def upload_business_image(business_id):
     business = Business.query.get(business_id)

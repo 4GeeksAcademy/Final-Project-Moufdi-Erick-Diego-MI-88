@@ -95,7 +95,12 @@ export const CategoryPage = () => {
                                     business_phone_number={business.business_phone_number}
                                     business_address={business.business_address}
                                     business_description={business.business_description}
-                                    business_image={business.business_image}
+                                    // ✅ Build full image URL instead of passing just the filename
+                                    business_image={
+                                        business.business_image
+                                            ? `${BASE_URL.replace("/api", "")}/static/uploads/${business.business_image}`
+                                            : null
+                                    }
                                     isFavorite={favoriteIds.includes(business.id)}
                                     onToggleFavorite={handleToggleFavorite}
                                 />

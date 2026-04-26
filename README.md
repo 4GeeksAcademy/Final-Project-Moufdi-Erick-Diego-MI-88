@@ -1,6 +1,6 @@
 # 🗺️ Vendor Discovery Platform
 
-> *A modern digital Yellow Pages — enhanced with offers, business profiles, and location-based discovery.*
+> *A modern digital Vendor Discovery Platform — enhanced with offers, business profiles, and location-based discovery.*
 
 ---
 

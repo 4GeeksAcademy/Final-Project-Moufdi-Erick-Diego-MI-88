@@ -1,6 +1,6 @@
 # 🗺️ Vendor Discovery Platform
 
-> *A modern digital Vendor Discovery Platform — enhanced with offers, business profiles, and location-based discovery.*
+> *A modern digital directory Platform — enhanced with offers, business profiles, and location-based discovery.*
 
 ---
 

@@ -97,7 +97,6 @@ flask run
 
 ## 🔮 Future Improvements
 
-- ❤️ Favorites
 - 🔍 Advanced search & filters
 - 📊 Business analytics dashboard
 - 🤖 Recommendation system

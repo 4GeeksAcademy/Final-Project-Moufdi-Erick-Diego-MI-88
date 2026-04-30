@@ -1,0 +1,39 @@
+.button {
+    background: #ffde59
+}.signUpandLoginPages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #7e7d50;
+}
+
+.business-profile-content{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: left;
+    gap: 10px;
+    width: 100%;
+}
+
+.business-profile-content .col-4{
+    width: 40%;
+}
+
+.business-profile-content-img{
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.business-profile{
+    background-color: #7e773f;
+}
+.business-profile-content h1{
+    font-size: 1.5rem;
+}
+

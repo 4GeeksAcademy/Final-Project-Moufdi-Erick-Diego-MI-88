@@ -1,22 +1,473 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
-from api.utils import generate_sitemap, APIException
+from .models import db, User, Business, Discount, ContactMessage, NewsletterSubscriber, Review
+from .utils import generate_sitemap, APIException
 from flask_cors import CORS
+from sqlalchemy import select
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+import os
+from werkzeug.utils import secure_filename
+from .services.google_maps_service import get_coordinates
 
 api = Blueprint('api', __name__)
-
-# Allow CORS requests to this API
 CORS(api)
 
 
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
+@api.route("/signup", methods=["POST"])
+def handle_sign_up():
+    body = request.json
 
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
+    potential_user = db.session.execute(
+        select(User).where(User.email == body["email"])
+    ).scalar_one_or_none()
 
-    return jsonify(response_body), 200
+    if potential_user is not None:
+        return jsonify({"msg": "user with that email already exist"}), 400
+
+    new_user = User()
+    new_user.first_name = body["first_name"]
+    new_user.last_name = body["last_name"]
+    new_user.email = body["email"]
+    new_user.password = body["password"]
+    new_user.is_active = True
+    new_user.phone = body.get("phone")
+    new_user.city = body.get("city")
+    new_user.date_of_birth = body.get("date_of_birth")
+    new_user.security_question = body["security_question"]
+    new_user.security_answer = body["security_answer"]
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"msg": "user was created"}), 201
+
+
+@api.route("/business-signup", methods=["POST"])
+def handle_business_sign_up():
+    body = request.json
+
+    potential_business = db.session.execute(
+        select(Business).where(Business.email == body["email"])
+    ).scalar_one_or_none()
+
+    if potential_business is not None:
+        return jsonify({"msg": "business with that email already exist"}), 400
+
+    new_business = Business()
+    new_business.business_name = body["business_name"]
+    new_business.business_phone_number = body["phone"]
+    new_business.business_address = body["address"]
+    new_business.website = body.get("website")
+    new_business.services = body.get("services")
+    new_business.business_description = body["business_description"]
+    new_business.type_of_business = body["type_of_business"]
+    new_business.email = body["email"]
+    new_business.password = body["password"]
+    new_business.security_question = body["security_question"]
+    new_business.security_answer = body["security_answer"]
+
+    db.session.add(new_business)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "business was created",
+        "business_id": new_business.id
+    }), 201
+
+
+@api.route("/login", methods=["POST"])
+def create_token():
+    body = request.json
+
+    user = User.query.filter_by(email=body["email"]).first()
+    if user and user.password == body["password"]:
+        access_token = create_access_token(identity=str(user.id))
+        return jsonify({
+            "token": access_token,
+            "user_id": user.id,
+            "business_id": user.business_id
+        }), 200
+
+    business = Business.query.filter_by(email=body["email"]).first()
+    if business and business.password == body["password"]:
+        access_token = create_access_token(identity=str(business.id))
+        return jsonify({
+            "token": access_token,
+            "user_id": None,
+            "business_id": business.id
+        }), 200
+
+    return jsonify({"msg": "Bad email or password"}), 401
+
+
+@api.route("/forgot-password/question", methods=["POST"])
+def get_security_question():
+    body = request.json
+
+    user = User.query.filter_by(email=body["email"]).first()
+    if user:
+        return jsonify({
+            "type": "user",
+            "security_question": user.security_question
+        }), 200
+
+    business = Business.query.filter_by(email=body["email"]).first()
+    if business:
+        return jsonify({
+            "type": "business",
+            "security_question": business.security_question
+        }), 200
+
+    return jsonify({"msg": "Email not found"}), 404
+
+
+@api.route("/reset-password", methods=["PUT"])
+def reset_password():
+    body = request.get_json()
+
+    user = User.query.filter_by(email=body["email"]).first()
+    if user:
+        if user.security_answer != body["security_answer"]:
+            return jsonify({"msg": "Wrong answer"}), 401
+
+        user.password = body["new_password"]
+        db.session.commit()
+        return jsonify({"msg": "Password updated"}), 200
+
+    business = Business.query.filter_by(email=body["email"]).first()
+    if business:
+        if business.security_answer != body["security_answer"]:
+            return jsonify({"msg": "Wrong answer"}), 401
+
+        business.password = body["new_password"]
+        db.session.commit()
+        return jsonify({"msg": "Password updated"}), 200
+
+    return jsonify({"msg": "User or business not found"}), 404
+
+
+@api.route("/business/<int:business_id>", methods=["GET"])
+def get_business(business_id):
+    business = Business.query.get(business_id)
+    if not business:
+        return jsonify({"msg": "Business not found"}), 404
+    return jsonify(business.serialize()), 200
+
+
+@api.route("/business/<int:business_id>", methods=["PUT"])
+def update_business(business_id):
+    business = Business.query.get(business_id)
+
+    if not business:
+        return jsonify({"msg": "Business not found"}), 404
+
+    body = request.get_json()
+
+    business.business_name = body["business_name"]
+    business.business_address = body["business_address"]
+    business.business_phone_number = body["business_phone_number"]
+    business.business_description = body["business_description"]
+    business.type_of_business = body["type_of_business"]
+
+    db.session.commit()
+
+    return jsonify(business.serialize()), 200
+
+
+# ✅ NEW — Delete business profile
+@api.route("/business/<int:business_id>", methods=["DELETE"])
+def delete_business(business_id):
+    business = Business.query.get(business_id)
+
+    if not business:
+        return jsonify({"msg": "Business not found"}), 404
+
+    db.session.delete(business)
+    db.session.commit()
+
+    return jsonify({"msg": "Business deleted"}), 200
+
+
+@api.route("/business/<int:business_id>/upload-image", methods=["POST"])
+def upload_business_image(business_id):
+    business = Business.query.get(business_id)
+
+    if not business:
+        return jsonify({"msg": "Business not found"}), 404
+
+    if "image" not in request.files:
+        return jsonify({"msg": "No image file provided"}), 400
+
+    image = request.files["image"]
+
+    if image.filename == "":
+        return jsonify({"msg": "No selected file"}), 400
+
+    upload_folder = os.path.join(
+        os.path.dirname(__file__), "../static/uploads")
+    os.makedirs(upload_folder, exist_ok=True)
+
+    filename = secure_filename(image.filename)
+    image_path = os.path.join(upload_folder, filename)
+    image.save(image_path)
+
+    business.business_image = filename
+    db.session.commit()
+
+    return jsonify(business.serialize()), 200
+
+
+@api.route("/user/<int:user_id>", methods=["DELETE"])
+def delete_user_profile(user_id):
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify({"msg": "User deleted"}), 200
+
+
+@api.route("/business/<int:business_id>/discounts", methods=["GET"])
+def get_business_discounts(business_id):
+    discounts = Discount.query.filter_by(business_id=business_id).all()
+    return jsonify([discount.serialize() for discount in discounts]), 200
+
+
+@api.route("/business/<int:business_id>/discounts", methods=["POST"])
+def create_discount(business_id):
+    body = request.get_json()
+
+    new_discount = Discount(
+        discount_title=body["discount_title"],
+        description=body["description"],
+        percentage_rate=body["percentage_rate"],
+        business_id=business_id
+    )
+
+    db.session.add(new_discount)
+    db.session.commit()
+
+    return jsonify(new_discount.serialize()), 201
+
+
+# ✅ NEW — Edit a discount
+@api.route("/business/<int:business_id>/discounts/<int:discount_id>", methods=["PUT"])
+def update_discount(business_id, discount_id):
+    discount = Discount.query.filter_by(id=discount_id, business_id=business_id).first()
+
+    if not discount:
+        return jsonify({"msg": "Discount not found"}), 404
+
+    body = request.get_json()
+    discount.discount_title = body.get("discount_title", discount.discount_title)
+    discount.description = body.get("description", discount.description)
+    discount.percentage_rate = body.get("percentage_rate", discount.percentage_rate)
+
+    db.session.commit()
+
+    return jsonify(discount.serialize()), 200
+
+
+# ✅ NEW — Delete a discount
+@api.route("/business/<int:business_id>/discounts/<int:discount_id>", methods=["DELETE"])
+def delete_discount(business_id, discount_id):
+    discount = Discount.query.filter_by(id=discount_id, business_id=business_id).first()
+
+    if not discount:
+        return jsonify({"msg": "Discount not found"}), 404
+
+    db.session.delete(discount)
+    db.session.commit()
+
+    return jsonify({"msg": "Discount deleted"}), 200
+
+
+def geocode():
+    address = request.args.get('address')
+    return jsonify(get_coordinates(address))
+
+
+@api.route('/contact-us', methods=['POST'])
+def contact():
+    data = request.get_json(force=True)
+    if not data:
+        return jsonify({"error": "No data received"}), 400
+    name = data.get("name")
+    email = data.get("email")
+    message = data.get("message")
+    if not all([name, email, message]):
+        return jsonify({"error": "Missing required fields"}), 400
+    new_message = ContactMessage(name=name, email=email, message=message)
+    db.session.add(new_message)
+    db.session.commit()
+    return jsonify({"success": True, "msg": "Message received"}), 200
+
+
+@api.route('/admin/messages/<int:message_id>', methods=['DELETE'])
+def delete_message(message_id):
+    msg = ContactMessage.query.get(message_id)
+    if not msg:
+        return jsonify({"error": "Message not found"}), 404
+    db.session.delete(msg)
+    db.session.commit()
+    return jsonify({"success": True, "msg": "Message deleted"}), 200
+
+
+@api.route('/admin/messages', methods=['GET'])
+def get_admin_messages():
+    messages = ContactMessage.query.order_by(ContactMessage.id.desc()).all()
+    result = [
+        {"id": m.id, "name": m.name, "email": m.email, "message": m.message}
+        for m in messages
+    ]
+    return jsonify(result), 200
+
+
+@api.route('/user', methods=['GET'])
+@jwt_required()
+def get_user_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({"msg": "User not found"}), 404
+    return jsonify(user.serialize()), 200
+
+
+@api.route("/businesses", methods=["GET"])
+def get_all_businesses():
+    all_businesses = Business.query.all()
+    return jsonify([business.serialize() for business in all_businesses]), 200
+
+
+@api.route("/favorite/business/<int:business_id>", methods=["POST"])
+@jwt_required()
+def add_favorite_business(business_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    business = Business.query.get(business_id)
+
+    if user is None or business is None:
+        return jsonify({"msg": "User or business not found"}), 404
+
+    if business not in user.favorite_businesses:
+        user.favorite_businesses.append(business)
+        db.session.commit()
+
+    return jsonify({"favorite_businesses": [b.serialize() for b in user.favorite_businesses]}), 200
+
+
+@api.route("/favorite/business/<int:business_id>", methods=["DELETE"])
+@jwt_required()
+def remove_favorite_business(business_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    business = Business.query.get(business_id)
+
+    if user is None or business is None:
+        return jsonify({"msg": "User or business not found"}), 404
+
+    if business in user.favorite_businesses:
+        user.favorite_businesses.remove(business)
+        db.session.commit()
+
+    return jsonify({"favorite_businesses": [b.serialize() for b in user.favorite_businesses]}), 200
+
+
+@api.route("/user/<int:user_id>", methods=["PUT"])
+@jwt_required()
+def update_user_profile(user_id):
+    current_user_id = int(get_jwt_identity())
+    if current_user_id != user_id:
+        return jsonify({"msg": "Unauthorized"}), 403
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+    body = request.get_json()
+    user.first_name = body.get("first_name", user.first_name)
+    user.last_name = body.get("last_name", user.last_name)
+    user.phone = body.get("phone", user.phone)
+    user.city = body.get("city", user.city)
+    user.date_of_birth = body.get("date_of_birth", user.date_of_birth)
+    db.session.commit()
+    return jsonify(user.serialize()), 200
+
+
+@api.route("/user/<int:user_id>/password", methods=["PUT"])
+@jwt_required()
+def change_user_password(user_id):
+    current_user_id = int(get_jwt_identity())
+    if current_user_id != user_id:
+        return jsonify({"msg": "Unauthorized"}), 403
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    body = request.get_json()
+    new_password = body.get("new_password")
+
+    if not new_password:
+        return jsonify({"msg": "Password is required"}), 400
+
+    user.password = new_password
+    db.session.commit()
+    return jsonify({"msg": "Password updated successfully"}), 200
+
+
+@api.route("/newsletter", methods=["POST"])
+def subscribe_newsletter():
+    body = request.get_json()
+    email = body.get("email")
+
+    if not email:
+        return jsonify({"msg": "Email is required"}), 400
+
+    existing = NewsletterSubscriber.query.filter_by(email=email).first()
+    if existing:
+        return jsonify({"msg": "Email already subscribed"}), 400
+
+    new_sub = NewsletterSubscriber(email=email)
+    db.session.add(new_sub)
+    db.session.commit()
+    return jsonify({"msg": "Subscribed successfully"}), 201
+
+
+@api.route("/business/<int:business_id>/reviews", methods=["GET"])
+def get_business_reviews(business_id):
+    reviews = Review.query.filter_by(business_id=business_id).order_by(Review.id.desc()).all()
+    return jsonify([review.serialize() for review in reviews]), 200
+
+
+@api.route("/business/<int:business_id>/reviews", methods=["POST"])
+def create_review(business_id):
+    body = request.get_json()
+
+    user_id = body.get("user_id")
+    rating = body.get("rating")
+    comment = body.get("comment")
+
+    if not user_id or not rating or not comment:
+        return jsonify({"msg": "Missing required fields"}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    business = Business.query.get(business_id)
+    if not business:
+        return jsonify({"msg": "Business not found"}), 404
+
+    new_review = Review(
+        rating=rating,
+        comment=comment,
+        user_name=f"{user.first_name} {user.last_name}",
+        user_id=user.id,
+        business_id=business.id
+    )
+
+    db.session.add(new_review)
+    db.session.commit()
+
+    return jsonify(new_review.serialize()), 201

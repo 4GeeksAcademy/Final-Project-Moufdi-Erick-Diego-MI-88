@@ -1,52 +1,131 @@
-import React, { useEffect } from "react"
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
+import React, { useEffect, useState } from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Hero } from "../components/Hero.jsx";
+import { BusinessCard } from "../components/BusinessCard.jsx";
+
 
 export const Home = () => {
 
+	const BASE_URL = import.meta.env.VITE_BACKEND_URL
+	const [businesses, setBusinesses] = useState([]);
+	const [favoriteIds, setFavoriteIds] = useState([]);
 	const { store, dispatch } = useGlobalReducer()
 
-	const loadMessage = async () => {
+    const loadBusinesses = async () => {
+        try {
+            const backendUrl = import.meta.env.VITE_BACKEND_URL
+
+            if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
+
+            const response = await fetch(backendUrl + "/businesses")
+            const data = await response.json()
+
+            if (response.ok) dispatch({ type: "set_businesses", payload: data })
+
+            return data
+
+        } catch (error) {
+            if (error.message) throw new Error(
+                `Could not fetch businesses from the backend.
+                Please check if the backend is running and the backend port is public.`
+            );
+        }
+
+    }
+
+const loadUserFavorites = async () => {
 		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL
+			const token = localStorage.getItem("token");
+			if (!token) return;
 
-			if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
+			const response = await fetch(`${BASE_URL}/user`, {
+				headers: {
+					Authorization: "Bearer " + token
+				}
+			});
 
-			const response = await fetch(backendUrl + "/api/hello")
-			const data = await response.json()
+			const data = await response.json();
 
-			if (response.ok) dispatch({ type: "set_hello", payload: data.message })
-
-			return data
+			const ids = (data.favorite_businesses || []).map(b => b.id);
+			setFavoriteIds(ids);
 
 		} catch (error) {
-			if (error.message) throw new Error(
-				`Could not fetch the message from the backend.
-				Please check if the backend is running and the backend port is public.`
-			);
+			console.error(error);
 		}
+	};
 
-	}
+const handleToggleFavorite = async (businessId, isFavorite) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Login first");
+      return;
+    }
+
+    const method = isFavorite ? "DELETE" : "POST";
+
+    const response = await fetch(`${BASE_URL}/favorite/business/${businessId}`, {
+      method,
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+	if (!response.ok) return;
+    const data = await response.json();
+
+    const updatedIds = (data.favorite_businesses || []).map(b => b.id);
+    setFavoriteIds(updatedIds);
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 	useEffect(() => {
-		loadMessage()
+		loadBusinesses();
+		loadUserFavorites();
 	}, [])
 
-	return (
-		<div className="text-center mt-5">
-			<h1 className="display-4">Hello Rigo!!</h1>
-			<p className="lead">
-				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
-			</p>
-			<div className="alert alert-info">
-				{store.message ? (
-					<span>{store.message}</span>
-				) : (
-					<span className="text-danger">
-						Loading message from the backend (make sure your python 🐍 backend is running)...
-					</span>
-				)}
-			</div>
-		</div>
-	);
-}; 
+    return (
+
+        <div className="text-center">
+            <Hero />
+
+            <div className="container py-5">
+                <div className="row g-4">
+                    {store?.businesses.map((business) => {
+                        
+                        // moufdi put this to build the full image URL so the cards display the actual uploaded pictures correctly
+                        const fullImageUrl = business.business_image 
+                            ? `${import.meta.env.VITE_BACKEND_URL.replace("/api", "")}/static/uploads/${business.business_image}` 
+                            : null;
+
+                        return (
+                            <div className="col-12 col-sm-6 col-lg-4 col-xl-3" key={business.id}>
+                                <BusinessCard
+								
+                                    // moufdi put this to pass the business ID to the card so the "More Info" link works
+                                    id={business.id}
+                                    business_name={business.business_name}
+                                    type_of_business={business.type_of_business}
+                                    business_phone_number={business.business_phone_number}
+                                    business_address={business.business_address}
+                                    business_description={business.business_description}
+                                    // moufdi put this to pass the full URL instead of just the filename
+                                    business_image={fullImageUrl}
+
+								isFavorite={favoriteIds.includes(business.id)}
+              					onToggleFavorite={handleToggleFavorite}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
+
+            </div>
+        </div>
+
+
+    );
+};

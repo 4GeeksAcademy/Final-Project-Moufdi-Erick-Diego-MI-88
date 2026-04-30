@@ -252,7 +252,38 @@ def create_discount(business_id):
     return jsonify(new_discount.serialize()), 201
 
 
-@api.route('/geocode', methods=['GET'])
+# ✅ NEW — Edit a discount
+@api.route("/business/<int:business_id>/discounts/<int:discount_id>", methods=["PUT"])
+def update_discount(business_id, discount_id):
+    discount = Discount.query.filter_by(id=discount_id, business_id=business_id).first()
+
+    if not discount:
+        return jsonify({"msg": "Discount not found"}), 404
+
+    body = request.get_json()
+    discount.discount_title = body.get("discount_title", discount.discount_title)
+    discount.description = body.get("description", discount.description)
+    discount.percentage_rate = body.get("percentage_rate", discount.percentage_rate)
+
+    db.session.commit()
+
+    return jsonify(discount.serialize()), 200
+
+
+# ✅ NEW — Delete a discount
+@api.route("/business/<int:business_id>/discounts/<int:discount_id>", methods=["DELETE"])
+def delete_discount(business_id, discount_id):
+    discount = Discount.query.filter_by(id=discount_id, business_id=business_id).first()
+
+    if not discount:
+        return jsonify({"msg": "Discount not found"}), 404
+
+    db.session.delete(discount)
+    db.session.commit()
+
+    return jsonify({"msg": "Discount deleted"}), 200
+
+
 def geocode():
     address = request.args.get('address')
     return jsonify(get_coordinates(address))

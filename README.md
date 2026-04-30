@@ -1,6 +1,9 @@
 # 🗺️ Vendor Discovery Platform
 
+> *A modern digital directory Platform — enhanced with offers, business profiles, and location-based discovery.*
+
 > *A modern digital Yellow Pages — enhanced with offers, business profiles, and location-based discovery.*
+
 
 ---
 
@@ -97,7 +100,9 @@ flask run
 
 ## 🔮 Future Improvements
 
+
 - ❤️ Favorites
+
 - 🔍 Advanced search & filters
 - 📊 Business analytics dashboard
 - 🤖 Recommendation system

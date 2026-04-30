@@ -2,8 +2,6 @@
 
 > *A modern digital directory Platform — enhanced with offers, business profiles, and location-based discovery.*
 
-> *A modern digital Yellow Pages — enhanced with offers, business profiles, and location-based discovery.*
-
 
 ---
 
